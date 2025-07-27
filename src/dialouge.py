@@ -39,9 +39,8 @@ class DialogueBox:
 
     def update(self):
         if self.finished_typing:
-            # After finished typing, wait stay_time before disappearing
             if time.time() >= self.remove_after:
-                return True  # Signal to DialogueManager to remove this
+                return True
             return False
 
         elapsed = time.time() - self.start_time
@@ -84,7 +83,7 @@ class DialogueManager:
 
     def queue_dialogue(self, text, author, type_time=3, stay_time=2):
         self.dialogue_queue.append((text, author, type_time, stay_time))
-        # oh my fucking god did i have a whole ass queue system but i did the timings myself... im gonna kms
+        # oh my fucking god did i have a whole ass queue system but i did the timings myself...
 
     def update(self):
         if self.current_dialogue is None and self.dialogue_queue:

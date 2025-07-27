@@ -14,7 +14,7 @@ class GiantLazer:
         self.target_top_y = arena_rect.top  # rise to top of arena
         self.height = 0
 
-        self.state = "rising"  # rising → sweeping → done
+        self.state = "rising"  # rising -> sweeping -> done
         self.finished = False  # flag to mark for removal
 
     def update(self):

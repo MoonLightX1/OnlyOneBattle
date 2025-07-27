@@ -2,8 +2,8 @@ import pygame
 
 class WaveSplashRect:
     def __init__(self, x, arena_rect, height_rank, width=12, rise_speed=5, move_speed=4):
-        self.start_x = x            # Store the starting x, don’t overwrite this
-        self.x = x                  # Current moving x position
+        self.start_x = x            
+        self.x = x                 
         self.width = width
         self.full_height = [40, 80, 120, 160, 160, 120, 80, 40][height_rank]
         self.height = 0

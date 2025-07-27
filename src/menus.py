@@ -232,8 +232,6 @@ def fightingscreen_dialog_logic(screen, state):
     Music.play(1,1,True)
 
     isindialouge = False
-
-    # Track Enter press time and outro state
     enter_pressed_time = None
     outro_transition = None
 
@@ -440,13 +438,13 @@ def battle_screen_01(screen, state):
     battlesong = SFX("data/sounds/tracks/battle_loop.mp3")
     battlesong_active = False
     
-    current_weapon = "bullet"  # or "sword"
+    current_weapon = "bullet" 
     sword = Sword(player, hitbox_size=1.2, damage=15, cooldown=0.4)
     
         # boss teheee
     boss = Boss("data/artwork/enemies_heart.png", x=1270, y=838, width=149, height=140, arena_rect=arena_rect)
 
-    # Define wall outlines (gray) for collision, not the inner black arena
+    # Define wall outlines for collision, not the inner black arena
     wall_thickness = 8
     walls = [
         pygame.Rect(arena_rect.left, arena_rect.top, arena_rect.width, wall_thickness),  # top
@@ -544,7 +542,7 @@ def battle_screen_01(screen, state):
                     current_weapon = "sword"
                 elif event.key == pygame.K_3:
                     current_weapon = "throwable"
-                elif event.key == pygame.K_f and not shield_active and stage_mgr.load_stage() == 5:  # Activate shield only if stage 5
+                elif event.key == pygame.K_f and not shield_active and stage_mgr.load_stage() == 5: 
                     if shield and shield.is_ready():
                         shield.activate()
                         current_weapon = None  # Disable weapon usage
@@ -614,7 +612,7 @@ def battle_screen_01(screen, state):
                         )
                 elif action_other == 3:
                     print("Boss uses: Spinning Balls")
-                    angles = [i for i in range(30, 360, 30)]  # Skips top (0 degrees)
+                    angles = [i for i in range(30, 360, 30)] 
                     for angle in angles:
                         rad = math.radians(angle)
                         speed = 5
@@ -676,7 +674,7 @@ def battle_screen_01(screen, state):
                         )
                 elif action_other == 3:
                     print("Boss uses: Spinning Balls")
-                    angles = [i for i in range(30, 360, 30)]  # Skips top (0 degrees)
+                    angles = [i for i in range(30, 360, 30)]
                     for angle in angles:
                         rad = math.radians(angle)
                         speed = 5
@@ -736,7 +734,7 @@ def battle_screen_01(screen, state):
         #boss
         boss.update(stage_mgr.load_stage())
         if boss.health == 200 and stage_mgr.load_stage() == 1:
-            stage_mgr.save_stage(2)  # Save stage when boss health reaches 200
+            stage_mgr.save_stage(2) 
             battlesong.stop()
             return "fighting_dialog"
         elif boss.health == 100 and stage_mgr.load_stage() == 2:
@@ -768,7 +766,7 @@ def battle_screen_01(screen, state):
         pygame.draw.rect(screen, (255, 0, 0), boss.rect, 2)
         pygame.draw.rect(screen, (0, 255, 0), player.rect, 2)
 
-        if player.health <= 0 and stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5 and boss.health <= 0:
+        if player.health <= 0:
             print("Player is dead!")
             battlesong.stop()
             return "deadscreen"
@@ -786,10 +784,8 @@ def battle_screen_01(screen, state):
         all_raised = all(splash.raised for splash in wave_splash_list)
 
         if all_raised:
-            # Now move all splashes left
             for splash in wave_splash_list:
                 splash.x -= splash.move_speed
-                # Update rect again after moving x
                 splash.rect = pygame.Rect(int(splash.x), splash.y, splash.width, splash.height)
 
                 # Mark done if fully past left wall
@@ -842,7 +838,7 @@ def battle_screen_01(screen, state):
         for attack in active_rocket_attacks:
             attack.draw(screen)
 
-        # To check collisions globally:
+        # To check collisions:
         for attack in active_rocket_attacks:
             if attack.check_player_collision(player) == True:
                 print("Player hit by rockets!")
@@ -871,9 +867,9 @@ def battle_screen_01(screen, state):
         if shield.is_active():
             current_weapon = None
         
-        # Draw walls as visible  borders
+        # Draw walls as visible borders
         for wall in walls:
-            pygame.draw.rect(screen, (255, 0, 0), wall)
+            pygame.draw.rect(screen, (44, 45, 48), wall)
         
         if current_weapon == "sword":
                         
@@ -915,11 +911,11 @@ def battle_screen_01(screen, state):
                 vfx.update(walls, player, vfx_list)
                 vfx.draw(screen)
             else:
-                vfx.draw(screen)  # For other VFX types like Throwable, Bullet, etc.
+                vfx.draw(screen)  # For other VFX types like Throwable, Bullet, etc. (idk why i even put them in the vfx list)
         
         draw_status_texts(screen, font, player, boss, player.ammo, current_weapon, stage_mgr.load_stage(), time_left_minutes)
         
-        # Draw charge meter (only for bullet mode)
+        # charge meter
         if current_weapon == "bullet":
             charge_ratio, _ = player.get_charge_level()
             bar_x = arena_rect.left + 10

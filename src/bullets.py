@@ -48,8 +48,6 @@ class Bullet:
         self.y += self.vy 
         self.rect.topleft = (self.x, self.y) # EW I DID MORE MATH :throwsup:
 
-        # Optional: kill offscreen bullets
-
         for wall in walls:
             if self.rect.colliderect(wall):
                 self.alive = False

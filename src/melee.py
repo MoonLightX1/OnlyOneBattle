@@ -42,7 +42,6 @@ class Sword:
             y = self.owner.rect.centery
             self.hitbox_center = (x, y)
 
-            # Update visual rect for drawing
             self.hitbox_rect.center = self.hitbox_center
 
     def update(self):

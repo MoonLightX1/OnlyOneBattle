@@ -98,7 +98,7 @@ class Boss:
                     vfx_list.append(ParticleEffect(self.rect.centerx, self.rect.centery))
             if isinstance(obj, Throwable) and getattr(obj, 'alive', False) and hasattr(obj, 'rect'):
                 if self.rect.colliderect(obj.rect):
-                    self.take_damage(0.1)  # throwbale has set damage to 0.1 
+                    self.take_damage(0.1) 
 
     def add_health(self, amount):
         now = time.time()
@@ -118,6 +118,7 @@ class Boss:
     def resolve_collision_with_player(self, player):
         if self.rect.colliderect(player.rect):
             # Push player out of the boss's body
+            # WAIT I DIDNT EVEN REALIZE I ADDED THIS IM SO SMART WHAT
 
             dx = player.rect.centerx - self.rect.centerx
             dy = player.rect.centery - self.rect.centery

@@ -45,8 +45,6 @@ class Rocket:
 
         self.rect = pygame.Rect(self.x - self.radius - 5, self.y - self.radius - 5, (self.radius + 5) * 2, (self.radius + 5) * 2)
 
-
-        # Explode if 3 seconds passed OR collide with player
         if time.time() - self.spawn_time >= 4.95:
             self.explode()
 

@@ -31,7 +31,7 @@ class Throwable:
         self.vy += self.gravity
 
         # Determine orientation based on collision
-        # STOP WITH ALL OF THIS MATH SHIT
+        # STOP WITH ALL OF THIS MATH
 
         # Move
         self.x += self.vx

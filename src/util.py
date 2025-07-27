@@ -95,7 +95,6 @@ class SFX:
         new_sound = pygame.sndarray.make_sound(new_sound_array)
         while not self._stop_loop.is_set():
             channel = new_sound.play()
-            # Instead of a long wait, check frequently if stop is requested
             length_ms = int(1000 * new_sound.get_length())
             elapsed = 0
             check_interval = 50  # ms

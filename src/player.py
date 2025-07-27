@@ -108,7 +108,6 @@ class Player:
         self.rect.x += recoil_vx
         self.rect.y += recoil_vy
         
-        # Add particle burst at recoil origin
         vfx_list.append(ParticleEffect(self.rect.centerx, self.rect.centery))
 
         # Add dust effect at feet
@@ -120,7 +119,7 @@ class Player:
 
     def die(self):
         print("Player has died.")
-        # pretty self explanatory unless you are a fucking idiot
+        # pretty self explanatory unless dumb
 
     def apply_gravity(self):
         self.velocity_y += self.gravity
