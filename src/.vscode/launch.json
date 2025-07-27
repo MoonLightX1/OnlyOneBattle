@@ -1,0 +1,14 @@
+// I'm so smart i can do launch jsons now :coolfaceguy:
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: windowmain",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/windowmain.py",
+      "console": "integratedTerminal"
+    }
+  ]
+}
