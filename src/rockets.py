@@ -4,24 +4,27 @@ import time
 from vfx import ParticleEffect 
 
 class Rocket:
-    def __init__(self, center_pos, angle, radius, player, speed=3, color=(255, 100, 100), size=12):
+    def __init__(self, center_pos, angle, radius, player, speed=3, image_path="data/artwork/rocket.png"): #too lazy to just set the img path in the menus.py :sob:
         self.player = player
         self.speed = speed
-        self.color = color
-        self.size = size
-        
-        self.center_x, self.center_y = center_pos
+        self.radius = radius
         self.angle = angle
-        self.radius = 10  # fixed radius for rocket orbit
+
+        self.center_x, self.center_y = center_pos
         self.x = self.center_x + math.cos(angle) * radius
         self.y = self.center_y + math.sin(angle) * radius
 
-        self.spawn_time = time.time()
-        self.exploded = False
-        self.rect = pygame.Rect(self.x - radius, self.y - radius, radius * 2, radius * 2)
-
         self.vx = 0
         self.vy = 0
+
+        original_image = pygame.image.load(image_path).convert_alpha()
+        w, h = original_image.get_size()
+        self.image_orig = pygame.transform.scale(original_image, (w * 1.5, h * 1.5))
+        self.image = self.image_orig.copy()
+        self.rect = self.image.get_rect(center=(self.x, self.y))
+
+        self.spawn_time = time.time()
+        self.exploded = False
 
     def update(self):
         if self.exploded:
@@ -32,7 +35,7 @@ class Rocket:
         dist = math.hypot(dx, dy)
         if dist == 0:
             dist = 1
-        
+
         homing_strength = 0.05
         dir_x = dx / dist
         dir_y = dy / dist
@@ -43,7 +46,11 @@ class Rocket:
         self.x += self.vx
         self.y += self.vy
 
-        self.rect = pygame.Rect(self.x - self.radius - 5, self.y - self.radius - 5, (self.radius + 5) * 2, (self.radius + 5) * 2)
+        self.angle = math.atan2(self.vy, self.vx)
+
+        # Rotate scaled image
+        self.image = pygame.transform.rotate(self.image_orig, -math.degrees(self.angle))
+        self.rect = self.image.get_rect(center=(self.x, self.y))
 
         if time.time() - self.spawn_time >= 4.95:
             self.explode()
@@ -54,9 +61,8 @@ class Rocket:
             print("Rocket exploded!")
 
     def draw(self, screen):
-        if self.exploded:
-            return
-        pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
+        if not self.exploded:
+            screen.blit(self.image, self.rect.topleft)
 
 class RocketsAttack:
     def __init__(self, boss, player, arena_rect, num_rockets=8, radius=80):

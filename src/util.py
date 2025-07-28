@@ -225,39 +225,50 @@ def draw_status_texts(screen, font, player, boss, remaining_bullets, equipped_it
         text_surface = font.render(text, True, (255, 255, 255))
         screen.blit(text_surface, (x, y + i * line_height))
 
-def boss_attack_loop(vfx_list, wave_splash_list, boss, arena_rect, flappybirds):
-    try:
-        action = random.randint(1, 3)
-        print(f"[boss_attack_loop] Action chosen: {action}")
-        if action == 1:
-            print("Boss uses: Wave Splash")
-            splash_width = 20
-            gap = 6
-            spacing = splash_width + gap  # 26 px between start of one splash to next
+# def boss_attack_loop(vfx_list, wave_splash_list, boss, arena_rect, flappybirds):
+#     try:
+#         action = random.randint(1, 3)
+#         print(f"[boss_attack_loop] Action chosen: {action}")
+#         if action == 1:
+#             print("Boss uses: Wave Splash")
+#             splash_width = 20
+#             gap = 6
+#             spacing = splash_width + gap  # 26 px between start of one splash to next
 
-            start_x = boss.rect.left - 30
-            for height_rank in range(8):
-                splash_x = start_x + height_rank * spacing
-                wave_splash_list.append(WaveSplashRect(splash_x, arena_rect, height_rank, width=splash_width))
-        elif action == 2:
-            print("Boss uses: Flappy Birf")
-            flappybirds.append(
-                    FlappyBird(x=boss.rect.centerx, arena_rect=arena_rect)
-                )
-        elif action == 3:
-            print("Boss uses: Spinning Balls")
-            angles = [i for i in range(30, 360, 30)]  # Skips top (0 degrees)
-            for angle in angles:
-                rad = math.radians(angle)
-                speed = 5
-                dx = math.cos(rad) * speed
-                dy = math.sin(rad) * speed
-                spawn_x = boss.rect.centerx
-                spawn_y = boss.rect.centery
-                spinning_ball = SpinningBall(spawn_x, spawn_y, dx, dy, arena_rect)
-                vfx_list.append(spinning_ball)
-    except Exception as e:
-        print(f"Exception in boss_attack_loop: {e}")
+#             start_x = boss.rect.left - 30
+#             for height_rank in range(8):
+#                 splash_x = start_x + height_rank * spacing
+#                 wave_splash_list.append(WaveSplashRect(splash_x, arena_rect, height_rank, width=splash_width))
+#         elif action == 2:
+#             print("Boss uses: Flappy Birf")
+#             flappybirds.append(
+#                     FlappyBird(x=boss.rect.centerx, arena_rect=arena_rect)
+#                 )
+#         elif action == 3:
+#             print("Boss uses: Spinning Balls")
+#             angles = [i for i in range(30, 360, 30)]  # Skips top (0 degrees)
+#             for angle in angles:
+#                 rad = math.radians(angle)
+#                 speed = 5
+#                 dx = math.cos(rad) * speed
+#                 dy = math.sin(rad) * speed
+#                 spawn_x = boss.rect.centerx
+#                 spawn_y = boss.rect.centery
+#                 spinning_ball = SpinningBall(spawn_x, spawn_y, dx, dy, arena_rect)
+#                 vfx_list.append(spinning_ball)
+#     except Exception as e:
+#         print(f"Exception in boss_attack_loop: {e}")
 
-    # Schedule the next attack after 5 seconds
-    delayed_call(5.0, boss_attack_loop, vfx_list, wave_splash_list, boss, arena_rect, flappybirds)
+#     # Schedule the next attack after 5 seconds
+#     delayed_call(5.0, boss_attack_loop, vfx_list, wave_splash_list, boss, arena_rect, flappybirds)
+
+
+def shift_pitch(sound, pitch_factor):
+    arr = pygame.sndarray.array(sound)
+
+    # Resample: new length = old / pitch_factor
+    indices = np.round(np.arange(0, len(arr), pitch_factor)).astype(int)
+    indices = indices[indices < len(arr)]  # Avoid out-of-bounds
+    new_arr = arr[indices]
+
+    return pygame.sndarray.make_sound(new_arr.copy())

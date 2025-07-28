@@ -9,6 +9,7 @@ from melee import Sword
 from rockets import *
 from boss import *
 from theflappybird import *
+from bg import *
 from giantlazer import *
 from spinningballs import *
 from acidrain import *
@@ -194,12 +195,15 @@ def fightingscreen_dialog_logic(screen, state):
         Button("ITEMSLOT_1", 622, 296, "data/artwork/itemslot_1.png", 160, 154),
         Button("ITEMSLOT_2", 793, 300, "data/artwork/itemslot_2.png", 149, 125),
         Button("ITEMSLOT_3", 964, 297, "data/artwork/itemslot_3.png", 151, 128),
-        Button("ATTACK", 163, 28, "data/artwork/attack.png", 423, 228),
-        Button("TALK", 603, 19, "data/artwork/talk.png", 597, 260),
-        Button("CRY", 1252, 33, "data/artwork/cry.png", 601, 232),
+        Button("ATTACK", 28, 27, "data/artwork/attack.png", 601, 232),
+        Button("TALK", 674, 27, "data/artwork/talk.png", 601, 232),
+        Button("CRY", 1304, 27, "data/artwork/mock.png", 601, 232), #just ref as cry if have time i can change to mock
     ]
-    my_font = pygame.font.Font("data/fonts/AnalogWhispers.ttf", 30)
+    my_font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)
     dialogue_manager = DialogueManager(font=my_font, screen=screen)
+
+    pygame.mixer.init()
+    word_sound = pygame.mixer.Sound("data/sounds/voice.WAV")
 
     frames = [f"data/artwork/transitions/frame__{str(i).zfill(4)}.png" for i in range(1, 17)]
 
@@ -229,11 +233,12 @@ def fightingscreen_dialog_logic(screen, state):
     show_dialogbox_example = False
     
     Music = SFX("data/sounds/tracks/idletension.mp3")
-    Music.play(1,1,True)
+    Music.play(1,1,True,0.5)
 
     isindialouge = False
     enter_pressed_time = None
     outro_transition = None
+    shield = None
 
     while True:
         for event in pygame.event.get():
@@ -255,41 +260,41 @@ def fightingscreen_dialog_logic(screen, state):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN and last_clicked_button_index == 3 and not show_dialogbox_example and isindialouge == False: #3 is attack
                     show_dialogbox_example = True
-                    dialogue_manager.queue_dialogue("This is what YOU wanted.", "AMALGAM", type_time=2, stay_time=1)
+                    dialogue_manager.queue_dialogue("This is what YOU wanted.", "AMALGAM", type_time=2, stay_time=1, char_sound=word_sound, pitch_factor=0.8)
                     enter_pressed_time = pygame.time.get_ticks()  # start delay timer
                 if stage_mgr.load_stage() == 1:
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example: #4 is talk
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2)
-                        delayed_call(3, lambda: dialogue_manager.queue_dialogue("Who are you?", "MC", type_time=2, stay_time=2))
-                        delayed_call(7, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(10, lambda: dialogue_manager.queue_dialogue("What are you?", "MC", type_time=2, stay_time=2))
-                        delayed_call(14, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(17, lambda: dialogue_manager.queue_dialogue("Okay", "MC", type_time=2, stay_time=2))
+                        dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8)
+                        delayed_call(3, lambda: dialogue_manager.queue_dialogue("Who are you?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(7, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(10, lambda: dialogue_manager.queue_dialogue("What are you?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(14, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(17, lambda: dialogue_manager.queue_dialogue("Okay", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(21, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example: #5 is mock
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Hmph, I guess I can't mock them..", "MC", type_time=1, stay_time=2)
+                        dialogue_manager.queue_dialogue("Hmph, I guess I can't mock them..", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
-                        delayed_call(3, end_dialogue)
+                        delayed_call(4, end_dialogue)
                 elif stage_mgr.load_stage() == 2:
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example: #4 is talk
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("I don't want to hurt you. Please stop attacking me.", "MC", type_time=2, stay_time=2)
-                        delayed_call(4, lambda: dialogue_manager.queue_dialogue("No.", "AMALGAM", type_time=2, stay_time=2))
-                        delayed_call(8, lambda: dialogue_manager.queue_dialogue("No?", "MC", type_time=1, stay_time=2))
-                        delayed_call(11, lambda: dialogue_manager.queue_dialogue("No.", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(14, lambda: dialogue_manager.queue_dialogue("Can you say anything besides no?", "MC", type_time=2, stay_time=2))
-                        delayed_call(18, lambda: dialogue_manager.queue_dialogue("Yes.", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(21, lambda: dialogue_manager.queue_dialogue("Okay... then... how've you been?", "MC", type_time=2, stay_time=2))
-                        delayed_call(25, lambda: dialogue_manager.queue_dialogue("I’ve been. I’ve been for a while, how though? You already know.", "AMALGAM", type_time=2, stay_time=2))
-                        delayed_call(29, lambda: dialogue_manager.queue_dialogue("What?", "MC", type_time=1, stay_time=2))
-                        delayed_call(32, lambda: dialogue_manager.queue_dialogue("I still think about the smell of his shampoo when I’m alone.", "AMALGAM", type_time=3, stay_time=2))
+                        dialogue_manager.queue_dialogue("I don't want to hurt you. Please stop attacking me.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        delayed_call(4, lambda: dialogue_manager.queue_dialogue("No.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(8, lambda: dialogue_manager.queue_dialogue("No?", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(11, lambda: dialogue_manager.queue_dialogue("No.", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(14, lambda: dialogue_manager.queue_dialogue("Can you say anything besides no?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(18, lambda: dialogue_manager.queue_dialogue("Yes.", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(21, lambda: dialogue_manager.queue_dialogue("Okay... then... how've you been?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(25, lambda: dialogue_manager.queue_dialogue("I’ve been. I’ve been for a while, how though? You already know.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(29, lambda: dialogue_manager.queue_dialogue("What?", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(32, lambda: dialogue_manager.queue_dialogue("I still think about the smell of his shampoo when I’m alone.", "AMALGAM", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
@@ -297,12 +302,12 @@ def fightingscreen_dialog_logic(screen, state):
                         delayed_call(37, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example: #5 is mock
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("You're an ugly bastard aren't you?", "MC", type_time=2, stay_time=2)
-                        delayed_call(4, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(7, lambda: dialogue_manager.queue_dialogue("Do me a favor and die already, make it snappy.", "MC", type_time=2, stay_time=2))
-                        delayed_call(11, lambda: dialogue_manager.queue_dialogue("No.", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(14, lambda: dialogue_manager.queue_dialogue("So it speaks...", "MC", type_time=1.5, stay_time=2))
-                        delayed_call(17.5, lambda: dialogue_manager.queue_dialogue("You've recieve a shield! Press F to activate it for 20 seconds with a delay of 10.", "???", type_time=3, stay_time=2))
+                        dialogue_manager.queue_dialogue("You're an ugly bastard aren't you?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        delayed_call(4, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(7, lambda: dialogue_manager.queue_dialogue("Do me a favor and die already, make it snappy.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(11, lambda: dialogue_manager.queue_dialogue("No.", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(14, lambda: dialogue_manager.queue_dialogue("So it speaks...", "MC", type_time=1.5, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(17.5, lambda: dialogue_manager.queue_dialogue("You've recieve a shield! Press F to activate it for 20 seconds with a delay of 10.", "???", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=1.5))
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
@@ -311,62 +316,62 @@ def fightingscreen_dialog_logic(screen, state):
                 elif stage_mgr.load_stage() == 4: # Stage 4 is they talked
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example: #4 is talk
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("I don't want to hurt you. Please stop attacking me.", "MC", type_time=2, stay_time=2)
-                        delayed_call(4, lambda: dialogue_manager.queue_dialogue("My food, my consumption, my existence requires.", "AMALGAM", type_time=2, stay_time=2))
-                        delayed_call(8, lambda: dialogue_manager.queue_dialogue("So you’re hungry?", "MC", type_time=1, stay_time=2))
-                        delayed_call(11, lambda: dialogue_manager.queue_dialogue("With you I’m always full. When you’re alone with your thoughts I am most powerful,", "AMALGAM", type_time=2, stay_time=2))
-                        delayed_call(15, lambda: dialogue_manager.queue_dialogue("when you hold up his picture frame, I am most present.", "AMALGAM", type_time=2, stay_time=2))
-                        delayed_call(20, lambda: dialogue_manager.queue_dialogue("He wouldn’t like you.", "MC", type_time=1.5, stay_time=2))
-                        delayed_call(23.5, lambda: dialogue_manager.queue_dialogue("But he’d understand.", "AMALGAM", type_time=1.5, stay_time=2))
-                        delayed_call(27, lambda: dialogue_manager.queue_dialogue("Well, I think I know what you are. How’ve you been?", "MC", type_time=2, stay_time=2))
-                        delayed_call(31, lambda: dialogue_manager.queue_dialogue("I’ve been. I’ve been for a while, how though? You already know.", "AMALGAM", type_time=2, stay_time=2))
-                        delayed_call(35, lambda: dialogue_manager.queue_dialogue("What?", "MC", type_time=1, stay_time=2))
-                        delayed_call(39, lambda: dialogue_manager.queue_dialogue("I still think about the smell of his shampoo when I’m alone.", "AMALGAM", type_time=3, stay_time=2))
-                        delayed_call(43, lambda: dialogue_manager.queue_dialogue("I think I had a cat once, a lanky tabby with a nasty attitude. Nepenthe. I grew up- ", "MC", type_time=2, stay_time=2))
-                        delayed_call(47, lambda: dialogue_manager.queue_dialogue("with him since we were born the same month. I remember he was afraid of me since I’d ", "MC", type_time=2, stay_time=2))
-                        delayed_call(51, lambda: dialogue_manager.queue_dialogue("chase him around and roughhouse. I know that’s bad, but I was an unattended child. ", "MC", type_time=2, stay_time=2))
-                        delayed_call(55, lambda: dialogue_manager.queue_dialogue("An unattended child is gonna terrorize some poor animal. Things got better when I", "MC", type_time=2, stay_time=2))
-                        delayed_call(58, lambda: dialogue_manager.queue_dialogue("got older. I’d clean his poo and puke, I think that made up for the terror. We’d", "MC", type_time=2, stay_time=2))
-                        delayed_call(62, lambda: dialogue_manager.queue_dialogue("cuddle as we watched TV and sometimes we’d watch the street from the windowsill", "MC", type_time=2, stay_time=2))
-                        delayed_call(66, lambda: dialogue_manager.queue_dialogue("together … . I miss him.", "MC", type_time=2, stay_time=2))
-                        delayed_call(70, lambda: dialogue_manager.queue_dialogue("I miss Nepenthe as much as you do. But not as much as him.", "AMALGAM", type_time=2, stay_time=2))
-                        delayed_call(74, lambda: dialogue_manager.queue_dialogue("I know.", "MC", type_time=1, stay_time=2))
+                        dialogue_manager.queue_dialogue("I don't want to hurt you. Please stop attacking me.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        delayed_call(4, lambda: dialogue_manager.queue_dialogue("My food, my consumption, my existence requires.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(8, lambda: dialogue_manager.queue_dialogue("So you’re hungry?", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(11, lambda: dialogue_manager.queue_dialogue("With you I’m always full. When you’re alone with your thoughts I am most powerful,", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(15, lambda: dialogue_manager.queue_dialogue("when you hold up his picture frame, I am most present.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(20, lambda: dialogue_manager.queue_dialogue("He wouldn’t like you.", "MC", type_time=1.5, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(23.5, lambda: dialogue_manager.queue_dialogue("But he’d understand.", "AMALGAM", type_time=1.5, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(27, lambda: dialogue_manager.queue_dialogue("Well, I think I know what you are. How’ve you been?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(31, lambda: dialogue_manager.queue_dialogue("I’ve been. I’ve been for a while, how though? You already know.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(35, lambda: dialogue_manager.queue_dialogue("What?", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(39, lambda: dialogue_manager.queue_dialogue("I still think about the smell of his shampoo when I’m alone.", "AMALGAM", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(43, lambda: dialogue_manager.queue_dialogue("I think I had a cat once, a lanky tabby with a nasty attitude. Nepenthe. I grew up- ", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(47, lambda: dialogue_manager.queue_dialogue("with him since we were born the same month. I remember he was afraid of me since I’d ", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(51, lambda: dialogue_manager.queue_dialogue("chase him around and roughhouse. I know that’s bad, but I was an unattended child. ", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(55, lambda: dialogue_manager.queue_dialogue("An unattended child is gonna terrorize some poor animal. Things got better when I", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(58, lambda: dialogue_manager.queue_dialogue("got older. I’d clean his poo and puke, I think that made up for the terror. We’d", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(62, lambda: dialogue_manager.queue_dialogue("cuddle as we watched TV and sometimes we’d watch the street from the windowsill", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(66, lambda: dialogue_manager.queue_dialogue("together … . I miss him.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(70, lambda: dialogue_manager.queue_dialogue("I miss Nepenthe as much as you do. But not as much as him.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(74, lambda: dialogue_manager.queue_dialogue("I know.", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(77, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example:
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Hmph mocking him will only make the situation worse.", "MC", type_time=3, stay_time=2)
+                        dialogue_manager.queue_dialogue("Hmph mocking him will only make the situation worse.", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                 elif stage_mgr.load_stage() == 5: #5 = they mocked b4
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example:
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Whats the point in talking to this loser anyway?", "MC", type_time=3, stay_time=2)
+                        dialogue_manager.queue_dialogue("Whats the point in talking to this loser anyway?", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(2, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example: #5 is mock
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Awww, is someone dying? Are you in pain?", "MC", type_time=2, stay_time=2)
-                        delayed_call(4, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(7, lambda: dialogue_manager.queue_dialogue("I know why you’re here. You’re tired of it all. You want me to kill you.", "MC", type_time=2, stay_time=2))
-                        delayed_call(11, lambda: dialogue_manager.queue_dialogue("Please.", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(14, lambda: dialogue_manager.queue_dialogue("Pathetic", "MC", type_time=1, stay_time=2))
-                        delayed_call(17, lambda: dialogue_manager.queue_dialogue("It would be a blessing.", "AMALGAM", type_time=2, stay_time=2))
-                        delayed_call(21, lambda: dialogue_manager.queue_dialogue("No blessing came to him. I saw you over his body. You caused it.", "MC", type_time=2, stay_time=2))
-                        delayed_call(25, lambda: dialogue_manager.queue_dialogue("I did't-", "AMALGAM", type_time=2, stay_time=0))
-                        delayed_call(27, lambda: dialogue_manager.queue_dialogue("I DON’T BELIEVE YOU! I think you’re pathetic. Worthless. Just a", "MC", type_time=3, stay_time=2))
-                        delayed_call(32, lambda: dialogue_manager.queue_dialogue("fucking road block. Just die and leave my life already!", "MC", type_time=3, stay_time=2))
-                        delayed_call(38, lambda: dialogue_manager.queue_dialogue("I will never die.", "AMALGAM", type_time=1, stay_time=2))
-                        delayed_call(41, lambda: dialogue_manager.queue_dialogue("You're not immortal. I will kill you.", "MC", type_time=1, stay_time=2))
-                        delayed_call(44, lambda: dialogue_manager.queue_dialogue("I will only die when you die. When your last breath is taken.", "AMALGAM", type_time=3, stay_time=2))
-                        delayed_call(47, lambda: dialogue_manager.queue_dialogue("When your memory has been wiped. I will be a hole in your heart.", "AMALGAM", type_time=3, stay_time=2))
-                        delayed_call(52, lambda: dialogue_manager.queue_dialogue("A dagger in your back. A needle in your veins.", "AMALGAM", type_time=3, stay_time=2))
-                        delayed_call(57, lambda: dialogue_manager.queue_dialogue("You're dead...", "MC", type_time=1, stay_time=2))
+                        dialogue_manager.queue_dialogue("Awww, is someone dying? Are you in pain?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        delayed_call(4, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(7, lambda: dialogue_manager.queue_dialogue("I know why you’re here. You’re tired of it all. You want me to kill you.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(11, lambda: dialogue_manager.queue_dialogue("Please.", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(14, lambda: dialogue_manager.queue_dialogue("Pathetic", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(17, lambda: dialogue_manager.queue_dialogue("It would be a blessing.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(21, lambda: dialogue_manager.queue_dialogue("No blessing came to him. I saw you over his body. You caused it.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(25, lambda: dialogue_manager.queue_dialogue("I did't-", "AMALGAM", type_time=2, stay_time=0, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(27, lambda: dialogue_manager.queue_dialogue("I DON’T BELIEVE YOU! I think you’re pathetic. Worthless. Just a", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(32, lambda: dialogue_manager.queue_dialogue("fucking road block. Just die and leave my life already!", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(38, lambda: dialogue_manager.queue_dialogue("I will never die.", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(41, lambda: dialogue_manager.queue_dialogue("You're not immortal. I will kill you.", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(44, lambda: dialogue_manager.queue_dialogue("I will only die when you die. When your last breath is taken.", "AMALGAM", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(47, lambda: dialogue_manager.queue_dialogue("When your memory has been wiped. I will be a hole in your heart.", "AMALGAM", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(52, lambda: dialogue_manager.queue_dialogue("A dagger in your back. A needle in your veins.", "AMALGAM", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(57, lambda: dialogue_manager.queue_dialogue("You're dead...", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
@@ -374,14 +379,14 @@ def fightingscreen_dialog_logic(screen, state):
                 elif stage_mgr.load_stage() == 7 or stage_mgr.load_stage() == 8 or stage_mgr.load_stage() == 3: #4/5/3
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example:
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Whats the point...", "MC", type_time=3, stay_time=2)
+                        dialogue_manager.queue_dialogue("Whats the point...", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(5, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example: #5 is mock
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Whats the point...", "MC", type_time=3, stay_time=2)
+                        dialogue_manager.queue_dialogue("Whats the point...", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
@@ -432,6 +437,7 @@ def battle_screen_01(screen, state):
     clock = pygame.time.Clock()
     background = pygame.image.load("data/artwork/battlegroundbase.png")
     overlay = pygame.image.load("data/artwork/enemies_battling.png")
+    arena_bg = GlitchyArena("data/artwork/arena.png", (401, 624))
     arena_rect = pygame.Rect(401, 624, 1045, 456)
     player = Player(arena_rect.centerx - 25, arena_rect.bottom - 50, 50, 50, arena_rect)
     
@@ -466,7 +472,7 @@ def battle_screen_01(screen, state):
     active_rocket_attacks = []
     acid_attack = None
     
-    font = pygame.font.Font("data/fonts/AnalogWhispers.ttf", 30)  # 30pt size
+    font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)  # 30pt size
     
     boss_attack_timer = 0
     attack_interval = 95 # milliseconds / 95 for first, 120 for second, 120 for the third
@@ -482,9 +488,9 @@ def battle_screen_01(screen, state):
     throw_amount = 5
     
     stage_mgr = StageManager()
-    if stage_mgr.load_stage() == None:
+    if stage_mgr.load_stage() == 1:
         print("Stage not found, setting to default stage 1.")
-        stage_mgr.save_stage(4)  # Ensure stage is set to 1 if not found
+        stage_mgr.save_stage(8)  # Ensure stage is set to 1 if not found
     print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
     
     if stage_mgr.load_stage() == 1:
@@ -527,8 +533,6 @@ def battle_screen_01(screen, state):
     
     running = True
     while running:
-
-        shield = Shield(player) if not shield else shield 
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -542,10 +546,12 @@ def battle_screen_01(screen, state):
                     current_weapon = "sword"
                 elif event.key == pygame.K_3:
                     current_weapon = "throwable"
-                elif event.key == pygame.K_f and not shield_active and stage_mgr.load_stage() == 5: 
-                    if shield and shield.is_ready():
+                elif event.key == pygame.K_f and not shield_active and (stage_mgr.load_stage() == 5 or stage_mgr.load_stage() == 8):
+                    if shield is None:
+                        shield = Shield(player)
+                    if shield.is_ready():
                         shield.activate()
-                        current_weapon = None  # Disable weapon usage
+                        current_weapon = None
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if not shield_active:
                     if current_weapon == "bullet":
@@ -709,7 +715,8 @@ def battle_screen_01(screen, state):
 
         screen.blit(background, (0, 0))
         screen.blit(overlay, (249, 57))
-        pygame.draw.rect(screen, (0, 0, 0), arena_rect)
+        arena_bg.update()
+        arena_bg.draw(screen)
 
         if stage_mgr.load_stage() in (3, 4, 5):
             if not countdown_started:
@@ -859,17 +866,16 @@ def battle_screen_01(screen, state):
         
         # SHIELD
         
-        shield.update()
-        shield.draw(screen)
-        shield.check_block(active_rocket_attacks)
-
-        # Prevent using weapons if shield is active
-        if shield.is_active():
-            current_weapon = None
+        if shield != None:
+            if shield.is_active():
+                shield.update()
+                shield.draw(screen)
+                shield.check_block(active_rocket_attacks)
+                current_weapon = None
         
         # Draw walls as visible borders
         for wall in walls:
-            pygame.draw.rect(screen, (44, 45, 48), wall)
+            pygame.draw.rect(screen, (23, 21, 25), wall)
         
         if current_weapon == "sword":
                         

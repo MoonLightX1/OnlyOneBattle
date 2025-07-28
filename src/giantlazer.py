@@ -1,21 +1,24 @@
 import pygame
 
 class GiantLazer:
-    def __init__(self, boss, arena_rect, width=24, color=(255, 0, 0), rise_speed=12, sweep_speed=7):
+    def __init__(self, boss, arena_rect, width=24, rise_speed=12, sweep_speed=7):
         self.arena_rect = arena_rect
-        self.color = color
-        self.width = width
         self.rise_speed = rise_speed
         self.sweep_speed = sweep_speed
 
         # Start from the ground
-        self.x = boss.rect.centerx - self.width // 2 + 80
-        self.top_y = arena_rect.bottom  # start from the bottom
-        self.target_top_y = arena_rect.top  # rise to top of arena
+        self.x = boss.rect.centerx - width // 2 + 80
+        self.top_y = arena_rect.bottom
+        self.target_top_y = arena_rect.top
         self.height = 0
 
-        self.state = "rising"  # rising -> sweeping -> done
-        self.finished = False  # flag to mark for removal
+        self.state = "rising"
+        self.finished = False
+
+        # Load the image
+        self.base_image = pygame.image.load("data/artwork/lazer.png").convert_alpha()
+        self.width = width
+        self.color = (255, 0, 0)  # Optional, in case of fallback
 
     def update(self):
         if self.state == "rising":
@@ -32,16 +35,17 @@ class GiantLazer:
                 self.state = "done"
 
         elif self.state == "done":
-            # Mark laser as finished so it can be removed
             self.finished = True
 
     def draw(self, screen):
         if self.state == "rising":
             dynamic_height = self.arena_rect.bottom - self.top_y
-            rect = pygame.Rect(self.x, self.top_y, self.width, dynamic_height)
         else:
-            rect = pygame.Rect(self.x, self.top_y, self.width, self.height)
-        pygame.draw.rect(screen, self.color, rect)
+            dynamic_height = self.height
+
+        lazer_image = pygame.transform.scale(self.base_image, (self.width, dynamic_height))
+        screen.blit(lazer_image, (self.x, self.top_y))
+
 
     def check_player_collision(self, player):
         if self.state in ["sweeping", "done"]:

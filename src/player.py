@@ -7,16 +7,15 @@ from util import SFX
 
 class Player:
     def __init__(self, spawn_x, spawn_y, width, height, arena_rect):
-        self.rect = pygame.Rect(spawn_x, spawn_y, width, height)
-        self.color = (255, 255, 255)
         self.speed = 5
         self.jump_power = -20
         self.gravity = 1
         self.velocity_y = 0
         self.screen_shake = 0 
         self.is_jumping = False
-        self.width = width
-        self.height = height
+        self.image = pygame.image.load("data/artwork/playerstar.png").convert_alpha()
+        self.original_image = self.image  # for flipping if needed
+        self.rect = self.image.get_rect(topleft=(spawn_x, spawn_y))
         self.last_damage_time = 0
         self.health = 125
         self.damage_cooldown = 0.1 
@@ -91,7 +90,7 @@ class Player:
         print(f"Charged: {charge:.2f} Power | {self.ammo} Bullets Left")
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        bullet = Bullet(self.rect.centerx, self.rect.centery, mouse_x, mouse_y, power=charge)
+        bullet = Bullet(self.rect.centerx, self.rect.centery, mouse_x, mouse_y, "data/artwork/longbullet.png", power=charge)
         vfx_list.append(bullet)
 
         # recoil
@@ -180,7 +179,10 @@ class Player:
             self.facing_right = True
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
+        # Flip if facing left
+        image_to_draw = pygame.transform.flip(self.original_image, not self.facing_right, False)
+        screen.blit(image_to_draw, self.rect)
+
         for bullet in self.bullets:
             bullet.draw(screen)
     

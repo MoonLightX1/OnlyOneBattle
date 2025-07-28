@@ -1,10 +1,14 @@
 import pygame
 from util import delayed_call
 from menus import *
+from OpenGL.GL import *
+from OpenGL.GLU import *
+import os
+from pygame.locals import DOUBLEBUF, OPENGL
 
 class GameState:
     def __init__(self):
-        self.current = "battlescreen_01"  # Initial state
+        self.current = "main_menu"  # Initial state
         self.pending = False
 
     def change(self, next_state):
@@ -44,7 +48,7 @@ def run_game(screen):
 
 if __name__ == "__main__":
     pygame.init()
-    screen = pygame.display.set_mode((1920, 1080))
+    screen = pygame.display.set_mode((1920, 1080), DOUBLEBUF | OPENGL)
     pygame.display.set_caption("OnlyOneBattle")
     run_game(screen)
     pygame.quit()
