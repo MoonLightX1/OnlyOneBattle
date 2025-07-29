@@ -3,7 +3,7 @@ from gamelogic import *
 
 class GameState:
     def __init__(self):
-        self.current = "battlescreen_01"  # Initial state
+        self.current = "fighting_dialog"  # Initial state
         self.pending = False
 
     def change(self, next_state):
@@ -28,6 +28,8 @@ def run_game(screen):
             result = battle_screen_01(screen, state)
         elif state.current == "deadscreen":
             result = deadscreen_logic(screen, state)
+        elif state.current == "credits":
+            result = creditslogic(screen, state)
         elif state.current == "quit":
             break
         else:

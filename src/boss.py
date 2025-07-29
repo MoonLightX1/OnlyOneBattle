@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from bullets import *
 from projectiles import *
+from util import SFX
 
 class Boss:
     def __init__(self, image_path, x, y, width, height, arena_rect, stagelvl=1):
@@ -41,6 +42,9 @@ class Boss:
 
         # Rect for collision
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        
+        self.damageSFX = SFX("data/sounds/damage sfx.mp3")
+        self.deathSFX = SFX("data/sounds/death sfx.mp3")
 
     def update(self, stagelvl):
         # Move horizontally
@@ -77,14 +81,15 @@ class Boss:
         else:
             screen.blit(rotated_image, rotated_rect.topleft)
 
-
     def take_damage(self, amount):
+        self.damageSFX.play(0.4, 1, False, 0.4)
         now = time.time()
         if now - self.last_damage_time >= self.damage_cooldown:
             self.health = round(self.health - amount, 1)
             self.last_damage_time = now
             print(f"Boss took {amount} damage! Health now: {self.health}")
             if self.health <= 0:
+                self.deathSFX.play(0.4, 1, False, 0.4)
                 self.health = 0
                 print('dead')
                     

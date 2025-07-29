@@ -1,6 +1,8 @@
 import pygame
 import time
 
+from util import SFX
+
 class Sword:
     def __init__(self, owner, hitbox_size=1.0, damage=1, cooldown=0.8, image_path="data/artwork/dagger.png"):
         self.owner = owner
@@ -23,10 +25,13 @@ class Sword:
         self.hitbox_center = (0, 0)
         self.hitbox_radius = (self.width + self.height) / 4 * hitbox_size
         self.hitbox_rect = pygame.Rect(0, 0, self.width, self.height)
+        
+        self.daggerhitSFX = SFX("data/sounds/dagger sfx.mp3")
 
     def attack(self):
         now = time.time()
         if not self.active and (now - self.last_attack_time) >= self.cooldown:
+            self.daggerhitSFX.play(0.6,1.5,False,0.7)
             self.active = True
             self.timer = int(self.cooldown * 60)
             self.last_attack_time = now

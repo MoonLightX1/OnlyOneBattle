@@ -45,6 +45,10 @@ class Player:
         self.reloading = False
         
         self.jumpSFX = SFX("data/sounds/jump_SFX.mp3")
+        self.hurtSFX = SFX("data/sounds/damage sfx.mp3")
+        self.deathSFX = SFX("data/sounds/death sfx.mp3")
+        self.chargeSFX = SFX("data/sounds/charge sfx.mp3")
+        self.shootSFX = SFX("data/sounds/shoot sfx.mp3")
 
     def handle_input(self, keys):
         if keys[pygame.K_LEFT]:
@@ -56,27 +60,34 @@ class Player:
 
     def jump(self):
         if not self.is_jumping:
-            self.jumpSFX.play(min_pitch=0.6, max_pitch=1.5)
+            self.jumpSFX.play(0.6, 1.5, False, 0.6)
             self.velocity_y = self.jump_power
             self.is_jumping = True
             
     def take_damage(self, amount):
+        self.hurtSFX.play(0.6, 1.5, False, 0.5)
         now = time.time()
         if now - self.last_damage_time >= self.damage_cooldown:
             self.health -= amount
             self.last_damage_time = now
             print(f"Player took {amount} damage! Health now: {self.health}")
             if self.health <= 0:
+                self.deathSFX.play(0.6,1.5,False,0.9)
+                self.chargeSFX.stop()
+                self.shootSFX.stop()
                 self.health = 0
-
+    
     def start_charging(self):
         self.charging = True
         self.charge_start_time = pygame.time.get_ticks()
+        self.chargeSFX.play(0.6,1.5,True,0.8)
 
     def stop_charging_and_shoot(self, vfx_list):
         if not self.charging:
             return
         self.charging = False
+        self.shootSFX.play(1,1,False,1)
+        self.chargeSFX.stop()
 
         if self.ammo <= 0:
             return
@@ -178,6 +189,10 @@ class Player:
         elif keys[pygame.K_RIGHT]:
             self.facing_right = True
 
+    def stop_current_sfx(self):
+        self.chargeSFX.stop()
+        self.shootSFX.stop()
+
     def draw(self, screen):
         # Flip if facing left
         image_to_draw = pygame.transform.flip(self.original_image, not self.facing_right, False)
@@ -207,12 +222,12 @@ class Player:
 
         # Compute color based on charge level
         if charge < 8:
-            color = (100, 255, 100)  # soft green
+            color = (100, 255, 100) 
         elif charge < 11:
-            color = (220, 220, 80)   # yellow
+            color = (220, 220, 80) 
         elif charge < 15:
-            color = (255, 140, 50)   # orange
+            color = (255, 140, 50)  
         else:
-            color = (255, 60, 60)    # red
+            color = (255, 60, 60)  
 
         return (charge - 5) / 15, color  # Normalize between 0-1

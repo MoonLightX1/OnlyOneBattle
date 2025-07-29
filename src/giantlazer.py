@@ -1,5 +1,7 @@
 import pygame
 
+from util import *
+
 class GiantLazer:
     def __init__(self, boss, arena_rect, width=24, rise_speed=12, sweep_speed=7):
         self.arena_rect = arena_rect
@@ -15,6 +17,9 @@ class GiantLazer:
         self.state = "rising"
         self.finished = False
 
+        self.hasplayedaudi = False
+        self.lazersfx = SFX("data/sounds/lazer sfx.mp3")
+
         # Load the image
         self.base_image = pygame.image.load("data/artwork/lazer.png").convert_alpha()
         self.width = width
@@ -22,6 +27,9 @@ class GiantLazer:
 
     def update(self):
         if self.state == "rising":
+            if self.hasplayedaudi == False:
+                self.lazersfx.play(0.6,1.5,False,0.8)
+                self.hasplayedaudi = True
             self.top_y -= self.rise_speed
             if self.top_y <= self.target_top_y:
                 self.top_y = self.target_top_y
@@ -33,6 +41,8 @@ class GiantLazer:
             if self.x <= self.arena_rect.left + 60:
                 self.x = self.arena_rect.left + 60
                 self.state = "done"
+                if self.hasplayedaudi == True: 
+                    self.lazersfx.stop()
 
         elif self.state == "done":
             self.finished = True

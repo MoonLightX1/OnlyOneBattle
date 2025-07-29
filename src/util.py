@@ -83,77 +83,51 @@ class Text:
         self.is_visible = True
 
 class SFX:
-    def __init__(self, filename):
+    def __init__(self, filename, cache_pitches=None):
         pygame.mixer.init()
         self.original_sound = pygame.mixer.Sound(filename)
         self.sound_array = pygame.sndarray.array(self.original_sound)
         self.sample_rate = pygame.mixer.get_init()[0]
-        self.loop_thread = None
-        self._stop_loop = threading.Event()
-        self.channel = None  # Track current channel
+        self.cached_variants = {}
+        self.channel = None
 
-    def _play_loop(self, new_sound_array):
-        new_sound = pygame.sndarray.make_sound(new_sound_array)
-        while not self._stop_loop.is_set():
-            self.channel = new_sound.play()
-            length_ms = int(1000 * new_sound.get_length())
-            elapsed = 0
-            check_interval = 50  # ms
-            while elapsed < length_ms:
-                if self._stop_loop.is_set():
-                    if self.channel:
-                        self.channel.stop()
-                    return
-                pygame.time.wait(check_interval)
-                elapsed += check_interval
+        # Cache common pitch variants (optional)
+        if cache_pitches:
+            for pitch in cache_pitches:
+                self.cached_variants[round(pitch, 2)] = self._resample(pitch)
 
-    def play(self, min_pitch=1.0, max_pitch=1.0, loop=False, volume=1.0):
-        pitch = random.uniform(min_pitch, max_pitch)
-        if pitch == 1.0 and not loop and volume == 1.0:
-            self.channel = self.original_sound.play()
-            return
-
-        sound_array = self.sound_array
-        length = sound_array.shape[0]
+    def _resample(self, pitch, volume=1.0):
+        array = self.sound_array
+        length = array.shape[0]
         new_length = int(length / pitch)
         indices = np.linspace(0, length, new_length, endpoint=False)
 
-        if len(sound_array.shape) == 1:
-            new_sound_array = np.interp(indices, np.arange(length), sound_array).astype(np.int16)
-        elif len(sound_array.shape) == 2:
-            channels = sound_array.shape[1]
-            new_sound_array = np.zeros((new_length, channels), dtype=np.int16)
-            for ch in range(channels):
-                new_sound_array[:, ch] = np.interp(indices, np.arange(length), sound_array[:, ch]).astype(np.int16)
+        if len(array.shape) == 1:
+            new_array = np.interp(indices, np.arange(length), array).astype(np.int16)
         else:
-            raise ValueError("Unsupported sound array shape.")
+            new_array = np.zeros((new_length, array.shape[1]), dtype=np.int16)
+            for ch in range(array.shape[1]):
+                new_array[:, ch] = np.interp(indices, np.arange(length), array[:, ch]).astype(np.int16)
 
-        # Apply volume scaling
-        new_sound_array = (new_sound_array * volume).clip(-32768, 32767).astype(np.int16)
+        new_array = (new_array * volume).clip(-32768, 32767).astype(np.int16)
+        return pygame.sndarray.make_sound(new_array)
 
-        if loop:
-            self.stop()  # Stop any existing loop
-            self._stop_loop.clear()
-            self.loop_thread = threading.Thread(target=self._play_loop, args=(new_sound_array,))
-            self.loop_thread.daemon = True
-            self.loop_thread.start()
+    def play(self, min_pitch=1.0, max_pitch=1.0, loop=False, volume=1.0):
+        pitch = round(random.uniform(min_pitch, max_pitch), 2)
+
+        if pitch in self.cached_variants:
+            sound = self.cached_variants[pitch]
         else:
-            new_sound = pygame.sndarray.make_sound(new_sound_array)
-            new_sound.set_volume(volume)
-            self.channel = new_sound.play()
+            sound = self._resample(pitch, volume)
+            self.cached_variants[pitch] = sound  # cache it for reuse
+
+        sound.set_volume(volume)
+        self.channel = sound.play(loops=-1 if loop else 0)
 
     def stop(self):
-        self._stop_loop.set()
-        if self.loop_thread and self.loop_thread.is_alive():
-            self.loop_thread.join(timeout=0.1)
-        self.loop_thread = None
-
-        # Stop any currently playing channel
         if self.channel and self.channel.get_busy():
             self.channel.stop()
             self.channel = None
-
-        self.original_sound.stop()
 
 def delayed_call(delay, func, *args, **kwargs):
     wrapped = functools.partial(func, *args, **kwargs) # I FUCKING HATE THREADS SO FUCKING MUCH AHHHHHHHHHHHHH
@@ -203,22 +177,30 @@ class TiledTransition:
         return self.done
 
 #for battle shit
-def draw_status_texts(screen, font, player, boss, remaining_bullets, equipped_item, stage_lvl, time_left_minutes):
+def draw_status_texts(screen, font, player, boss, remaining_bullets, equipped_item, stage_lvl, time_left_minutes, potions_left):
     timeleft = f"Time Left: {time_left_minutes:.2f} min"
     if stage_lvl == 1:
-        timeleft == "No time limit for this battle."
+        timeleft = "No time limit yet."
     if stage_lvl == 8 or stage_lvl == 7 or stage_lvl == 2:
         stage_lvl = 2
-        timeleft == "No time limit for this battle."
+        timeleft = "No time limit yet."
     if stage_lvl == 5 or stage_lvl == 4 or stage_lvl == 3:
         stage_lvl = 3
+    if equipped_item == "throwable":
+        equipped_item = "Potions"
+    if equipped_item == "bullet":
+        equipped_item = "Gun"
+    if equipped_item == "sword":
+        equipped_item = "Syringe"
     texts = [
         f"Your health: {player.health}",
         f"Boss's health: {boss.health}",
         f"Bullets Left: {remaining_bullets}",
         f"Equipped Item: {equipped_item}",
+        f"Potions Left: {potions_left}",
         f"Stage: {stage_lvl}",
-        f"{timeleft}"
+        f"{timeleft}",
+        f"Deal 100 HP..."
     ]
 
     x = 1557
