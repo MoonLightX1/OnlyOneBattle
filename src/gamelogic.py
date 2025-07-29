@@ -488,9 +488,9 @@ def battle_screen_01(screen, state):
     throw_amount = 5
     
     stage_mgr = StageManager()
-    if stage_mgr.load_stage() == 1:
+    if stage_mgr.load_stage() == None:
         print("Stage not found, setting to default stage 1.")
-        stage_mgr.save_stage(8)  # Ensure stage is set to 1 if not found
+        stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
     print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
     
     if stage_mgr.load_stage() == 1:
@@ -519,7 +519,15 @@ def battle_screen_01(screen, state):
         "data/artwork/transitions/frame__0015.png",
         "data/artwork/transitions/frame__0016.png"
     ], screen.get_size(), reverse=True)
-    
+
+    # Intro display setup
+    intro_display = True
+    intro_start_time = pygame.time.get_ticks()
+    intro_total_duration = 10000  # 10 seconds
+    intro_flash_duration = 6000   # Flashing for 6 seconds, then fade for 4 seconds
+    font_large = pygame.font.Font("data/fonts/vcrosdneue.ttf", 72)
+
+
     while not transition.is_done():
         screen.blit(background, (0, 0))
         screen.blit(overlay, (249, 57))
@@ -556,7 +564,6 @@ def battle_screen_01(screen, state):
                 if not shield_active:
                     if current_weapon == "bullet":
                         player.start_charging()
-                        repressendingpotential = False
                     elif current_weapon == "sword":
                         sword.attack()
                     elif current_weapon == "throwable":
@@ -593,129 +600,158 @@ def battle_screen_01(screen, state):
                 if not shield_active:
                     if current_weapon == "bullet":
                         player.stop_charging_and_shoot(vfx_list)
-        if stage_mgr.load_stage() == 1 or stage_mgr.load_stage():    #STAGE 1 ATTACKS WOOO
-            if boss_attack_timer == attack_interval:
-                possible_actions_other = [1, 2, 3]
-                if last_boss_attack == 1:
-                    possible_actions_other.remove(1)  # Remove Wave Splash if last used
-                action_other = random.choice(possible_actions_other)
-                last_boss_attack = action_other
-                print(f"[boss_attack_loop] Action chosen: {action_other}")
-                if action_other == 1:
-                    print("Boss uses: Wave Splash")
-                    splash_width = 20
-                    gap = 6
-                    spacing = splash_width + gap  # 26 px between start of one splash to next
+        if not intro_display:
+            if stage_mgr.load_stage() == 1 or stage_mgr.load_stage():    #STAGE 1 ATTACKS WOOO
+                if boss_attack_timer == attack_interval:
+                    possible_actions_other = [1, 2, 3]
+                    if last_boss_attack == 1:
+                        possible_actions_other.remove(1)  # Remove Wave Splash if last used
+                    action_other = random.choice(possible_actions_other)
+                    last_boss_attack = action_other
+                    print(f"[boss_attack_loop] Action chosen: {action_other}")
+                    if action_other == 1:
+                        print("Boss uses: Wave Splash")
+                        splash_width = 20
+                        gap = 6
+                        spacing = splash_width + gap  # 26 px between start of one splash to next
 
-                    for height_rank in range(8):
-                        splash_x = 1240 + height_rank * spacing
-                        wave_splash_list.append(WaveSplashRect(splash_x, arena_rect, height_rank, width=splash_width))
-                elif action_other == 2:
-                    print("Boss uses: Flappy Birf")
-                    flappybirds.append(
-                            FlappyBird(x=1266, arena_rect=arena_rect)
-                        )
-                elif action_other == 3:
-                    print("Boss uses: Spinning Balls")
-                    angles = [i for i in range(30, 360, 30)] 
-                    for angle in angles:
-                        rad = math.radians(angle)
-                        speed = 5
-                        dx = math.cos(rad) * speed
-                        dy = math.sin(rad) * speed
-                        spawn_x = boss.rect.centerx
-                        spawn_y = boss.rect.centery
-                        spinning_ball = SpinningBall(spawn_x, spawn_y, dx, dy, arena_rect)
-                        vfx_list.append(spinning_ball)
-                boss_attack_timer = 0
-            else:
-                boss_attack_timer += 1
-        
-        if stage_mgr.load_stage() == 2 or stage_mgr.load_stage() == 7 or stage_mgr.load_stage() == 8:     #STAGE 2 ATTACKS WOOOO
-            if boss_attack_timer == attack_interval:
-                possible_actions = [1, 2, 3, 4 ,5] # Rockets are more rare
-                if last_boss_attack == 1:
-                    possible_actions.remove(1)  # Remove Acid Rain if last used
-                action = random.choice(possible_actions)
-                last_boss_attack = action
-                print(f"[boss_attack_loop] Action chosen: {action}")
-                if action == 1 or action == 4:
-                    print("Boss uses: ACID RAIN :scary:")
-                    acid_attack = AcidRainAttack(arena_rect, player)
-                elif action == 2 or action == 5:
-                    print("Boss uses: GYANT LAZER")
-                    giant_lazers.append(GiantLazer(boss, arena_rect))
-                elif action == 3:
-                    print("Boss uses: rocket lazer :sad:")
-                    new_attack = RocketsAttack(boss, player, arena_rect)
-                    active_rocket_attacks.append(new_attack)
-                boss_attack_timer = 0
-            else:
-                boss_attack_timer += 1
-        
-        if stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:    #STAGE 3 ATTACKS WOOO
-            if boss_attack_timer == attack_interval:
-                possible_actions_other = [1, 2, 3, 4, 5, 6]
-                try:
-                    if last_boss_attack == 1 or last_boss_attack == 4:
-                        possible_actions_other.remove(1) 
-                except NameError:
-                    print("last_boss_attack not defined, using default actions.")
-                action_other = random.choice(possible_actions_other)
-                last_boss_attack = action_other
-                print(f"[boss_attack_loop] Action chosen: {action_other}")
-                if action_other == 1:
-                    print("Boss uses: Wave Splash")
-                    splash_width = 20
-                    gap = 6
-                    spacing = splash_width + gap  # 26 px between start of one splash to next
-                    for height_rank in range(8):
-                        splash_x = 1240 + height_rank * spacing
-                        wave_splash_list.append(WaveSplashRect(splash_x, arena_rect, height_rank, width=splash_width))
-                elif action_other == 2:
-                    print("Boss uses: Flappy Birf")
-                    flappybirds.append(
-                            FlappyBird(x=1266, arena_rect=arena_rect)
-                        )
-                elif action_other == 3:
-                    print("Boss uses: Spinning Balls")
-                    angles = [i for i in range(30, 360, 30)]
-                    for angle in angles:
-                        rad = math.radians(angle)
-                        speed = 5
-                        dx = math.cos(rad) * speed
-                        dy = math.sin(rad) * speed
-                        spawn_x = boss.rect.centerx
-                        spawn_y = boss.rect.centery
-                        spinning_ball = SpinningBall(spawn_x, spawn_y, dx, dy, arena_rect)
-                        vfx_list.append(spinning_ball)
-                if action_other == 4:
-                    print("Boss uses: ACID RAIN :scary:")
-                    acid_attack = AcidRainAttack(arena_rect, player)
-                elif action_other == 5:
-                    print("Boss uses: GYANT LAZER")
-                    giant_lazers.append(GiantLazer(boss, arena_rect))
-                elif action_other == 6:
-                    print("Boss uses: rocket lazer :sad:")
-                    new_attack = RocketsAttack(boss, player, arena_rect)
-                    active_rocket_attacks.append(new_attack)
-                boss_attack_timer = 0
-            else:
-                boss_attack_timer += 1
-
+                        for height_rank in range(8):
+                            splash_x = 1240 + height_rank * spacing
+                            wave_splash_list.append(WaveSplashRect(splash_x, arena_rect, height_rank, width=splash_width))
+                    elif action_other == 2:
+                        print("Boss uses: Flappy Birf")
+                        flappybirds.append(
+                                FlappyBird(x=1266, arena_rect=arena_rect)
+                            )
+                    elif action_other == 3:
+                        print("Boss uses: Spinning Balls")
+                        angles = [i for i in range(30, 360, 30)] 
+                        for angle in angles:
+                            rad = math.radians(angle)
+                            speed = 5
+                            dx = math.cos(rad) * speed
+                            dy = math.sin(rad) * speed
+                            spawn_x = boss.rect.centerx
+                            spawn_y = boss.rect.centery
+                            spinning_ball = SpinningBall(spawn_x, spawn_y, dx, dy, arena_rect)
+                            vfx_list.append(spinning_ball)
+                    boss_attack_timer = 0
+                else:
+                    boss_attack_timer += 1
+            if stage_mgr.load_stage() == 2 or stage_mgr.load_stage() == 7 or stage_mgr.load_stage() == 8:     #STAGE 2 ATTACKS WOOOO
+                if boss_attack_timer == attack_interval:
+                    possible_actions = [1, 2, 3, 4 ,5] # Rockets are more rare
+                    if last_boss_attack == 1:
+                        possible_actions.remove(1)  # Remove Acid Rain if last used
+                    action = random.choice(possible_actions)
+                    last_boss_attack = action
+                    print(f"[boss_attack_loop] Action chosen: {action}")
+                    if action == 1 or action == 4:
+                        print("Boss uses: ACID RAIN :scary:")
+                        acid_attack = AcidRainAttack(arena_rect, player)
+                    elif action == 2 or action == 5:
+                        print("Boss uses: GYANT LAZER")
+                        giant_lazers.append(GiantLazer(boss, arena_rect))
+                    elif action == 3:
+                        print("Boss uses: rocket lazer :sad:")
+                        new_attack = RocketsAttack(boss, player, arena_rect)
+                        active_rocket_attacks.append(new_attack)
+                    boss_attack_timer = 0
+                else:
+                    boss_attack_timer += 1
+            if stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:    #STAGE 3 ATTACKS WOOO
+                if boss_attack_timer == attack_interval:
+                    possible_actions_other = [1, 2, 3, 4, 5, 6]
+                    try:
+                        if last_boss_attack == 1 or last_boss_attack == 4:
+                            possible_actions_other.remove(1) 
+                    except NameError:
+                        print("last_boss_attack not defined, using default actions.")
+                    action_other = random.choice(possible_actions_other)
+                    last_boss_attack = action_other
+                    print(f"[boss_attack_loop] Action chosen: {action_other}")
+                    if action_other == 1:
+                        print("Boss uses: Wave Splash")
+                        splash_width = 20
+                        gap = 6
+                        spacing = splash_width + gap  # 26 px between start of one splash to next
+                        for height_rank in range(8):
+                            splash_x = 1240 + height_rank * spacing
+                            wave_splash_list.append(WaveSplashRect(splash_x, arena_rect, height_rank, width=splash_width))
+                    elif action_other == 2:
+                        print("Boss uses: Flappy Birf")
+                        flappybirds.append(
+                                FlappyBird(x=1266, arena_rect=arena_rect)
+                            )
+                    elif action_other == 3:
+                        print("Boss uses: Spinning Balls")
+                        angles = [i for i in range(30, 360, 30)]
+                        for angle in angles:
+                            rad = math.radians(angle)
+                            speed = 5
+                            dx = math.cos(rad) * speed
+                            dy = math.sin(rad) * speed
+                            spawn_x = boss.rect.centerx
+                            spawn_y = boss.rect.centery
+                            spinning_ball = SpinningBall(spawn_x, spawn_y, dx, dy, arena_rect)
+                            vfx_list.append(spinning_ball)
+                    if action_other == 4:
+                        print("Boss uses: ACID RAIN :scary:")
+                        acid_attack = AcidRainAttack(arena_rect, player)
+                    elif action_other == 5:
+                        print("Boss uses: GYANT LAZER")
+                        giant_lazers.append(GiantLazer(boss, arena_rect))
+                    elif action_other == 6:
+                        print("Boss uses: rocket lazer :sad:")
+                        new_attack = RocketsAttack(boss, player, arena_rect)
+                        active_rocket_attacks.append(new_attack)
+                    boss_attack_timer = 0
+                else:
+                    boss_attack_timer += 1
+                    
         if not battlesong_active:
             battlesong.play(1,1,True, 0.5)
             battlesong_active = True
         player.update(keys, walls, vfx_list)
         player.handle_reload()
-
         # Remove done VFX and dead bullets
         vfx_list = [v for v in vfx_list if (not isinstance(v, Bullet) or v.alive) and not getattr(v, "is_done", lambda: False)()]
+
+        if boss.health < 100 and stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:
+            repressendingpotential = False #Just an easy way to do it lol
 
         screen.blit(background, (0, 0))
         screen.blit(overlay, (249, 57))
         arena_bg.update()
         arena_bg.draw(screen)
+        # Boss intro warning text
+        if intro_display:
+            elapsed = pygame.time.get_ticks() - intro_start_time
+            if elapsed >= intro_total_duration:
+                intro_display = False
+            else:
+                warning_text = font_large.render("! BOSS INCOMING !", True, (255, 140, 0))
+                warning_surface = warning_text.convert_alpha()
+                
+                if elapsed <= intro_flash_duration:
+                    # Flash every 500ms
+                    flash_on = (elapsed // 500) % 2 == 0
+                    if flash_on:
+                        screen.blit(warning_surface, (
+                            arena_rect.centerx - warning_surface.get_width() // 2,
+                            arena_rect.centery - warning_surface.get_height() // 2
+                        ))
+                else:
+                    # Fade out over last 4 seconds (4000ms)
+                    fade_elapsed = elapsed - intro_flash_duration
+                    fade_duration = intro_total_duration - intro_flash_duration
+                    fade_ratio = 1.0 - (fade_elapsed / fade_duration)
+                    alpha = int(255 * fade_ratio)
+                    warning_surface.set_alpha(alpha)
+                    screen.blit(warning_surface, (
+                        arena_rect.centerx - warning_surface.get_width() // 2,
+                        arena_rect.centery - warning_surface.get_height() // 2
+                    ))
 
         if stage_mgr.load_stage() in (3, 4, 5):
             if not countdown_started:
@@ -725,7 +761,6 @@ def battle_screen_01(screen, state):
                 time_passed = pygame.time.get_ticks() - countdown_start_time
                 time_left_ms = max(0, countdown_duration - time_passed)
 
-                # Update global values
                 time_left_minutes = time_left_ms / 60000  # float like 1.5 = 1m 30s
                 minutes_left = int(time_left_ms / 60000)
                 seconds_left = int((time_left_ms % 60000) / 1000)
@@ -738,43 +773,42 @@ def battle_screen_01(screen, state):
                         return "mainmenu" # replace blah blah
 
         #boss
-        boss.update(stage_mgr.load_stage())
-        if boss.health == 200 and stage_mgr.load_stage() == 1:
-            stage_mgr.save_stage(2) 
-            battlesong.stop()
-            return "fighting_dialog"
-        elif boss.health == 100 and stage_mgr.load_stage() == 2:
-            stage_mgr.save_stage(3)
-            battlesong.stop()
-            return "fighting_dialog"
-        elif boss.health == 100 and stage_mgr.load_stage() == 7:
-            stage_mgr.save_stage(4)
-            battlesong.stop()
-            return "fighting_dialog"
-        elif boss.health == 100 and stage_mgr.load_stage() == 8:
-            stage_mgr.save_stage(5)
-            battlesong.stop()
-            return "fighting_dialog"
-        elif boss.health <= 0 and stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:
-            if repressendingpotential == True:
-                print("Boss defeated! | Repress Ending")
+        if not intro_display:
+            boss.update(stage_mgr.load_stage())
+            if boss.health == 200 and stage_mgr.load_stage() == 1:
+                stage_mgr.save_stage(2) 
                 battlesong.stop()
-                return "main_menu"
-            else:
-                print("Boss defeated! | Killer Ending")
+                return "fighting_dialog"
+            elif boss.health == 100 and stage_mgr.load_stage() == 2:
+                stage_mgr.save_stage(3)
                 battlesong.stop()
-                return "main_menu"
-        boss.resolve_collision_with_player(player)
-        boss.check_bullet_collisions(vfx_list, damage=5, vfx_list=vfx_list)  # assuming bullets in vfx_list
-        if boss.check_player_collision(player):
-            player.take_damage(10)
-        boss.draw(screen)
+                return "fighting_dialog"
+            elif boss.health == 100 and stage_mgr.load_stage() == 7:
+                stage_mgr.save_stage(4)
+                battlesong.stop()
+                return "fighting_dialog"
+            elif boss.health == 100 and stage_mgr.load_stage() == 8:
+                stage_mgr.save_stage(5)
+                battlesong.stop()
+                return "fighting_dialog"
+            elif boss.health <= 0 and stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:
+                if repressendingpotential == True:
+                    print("Boss defeated! | Repress Ending")
+                    battlesong.stop()
+                    return "main_menu"
+                else:
+                    print("Boss defeated! | Killer Ending")
+                    battlesong.stop()
+                    return "main_menu"
+            boss.resolve_collision_with_player(player)
+            boss.check_bullet_collisions(vfx_list, damage=5, vfx_list=vfx_list)  # assuming bullets in vfx_list
+            if boss.check_player_collision(player):
+                player.take_damage(10)
+            boss.draw(screen)
 
         if player.health <= 0:
-        # Flash white fade-in and fade-out
             fade_surface = pygame.Surface(screen.get_size())
             fade_surface.fill((255, 255, 255))
-
             for alpha in range(0, 200, 8):  # Fade in
                 fade_surface.set_alpha(alpha)
                 screen.blit(fade_surface, (0, 0))
@@ -801,8 +835,6 @@ def battle_screen_01(screen, state):
             for splash in wave_splash_list:
                 splash.x -= splash.move_speed
                 splash.rect = pygame.Rect(int(splash.x), splash.y, splash.width, splash.height)
-
-                # Mark done if fully past left wall
                 if splash.rect.right <= splash.arena_rect.left:
                     splash.done = True
 
@@ -860,7 +892,6 @@ def battle_screen_01(screen, state):
 
         if acid_attack is not None:
             acid_attack.update()
-
             acid_attack.draw(screen)
 
         for vfx in vfx_list:
@@ -872,7 +903,6 @@ def battle_screen_01(screen, state):
                     vfx.spawned_zone.check_touch(player.rect, bossArry, boss, player) #PROJECTILES PROJECTILES PROJECTILES PROJECTILES
         
         # SHIELD
-        
         if shield != None:
             if shield.is_active():
                 shield.update()
@@ -884,8 +914,7 @@ def battle_screen_01(screen, state):
         for wall in walls:
             pygame.draw.rect(screen, (23, 21, 25), wall)
         
-        if current_weapon == "sword":
-                        
+        if current_weapon == "sword":    
             sword.update()
             # Check collision with boss:
             if sword.check_hit(boss):
@@ -906,7 +935,6 @@ def battle_screen_01(screen, state):
                         print('no')
                     else:
                         boss.add_health(5)      
-            # Draw sword and hitbox
             sword.draw(screen)
         if current_weapon == "throwable":
             for vfx in vfx_list:
@@ -942,13 +970,13 @@ def battle_screen_01(screen, state):
                 rect = pygame.Rect(block_x, bar_y, block_size, block_size)
                 threshold = (i + 1) / total_blocks
                 color = (
-                    (100, 255, 100) if i == 0 else
-                    (220, 220, 80) if i == 1 else
-                    (255, 140, 50) if i == 2 else
-                    (255, 60, 60)
-                ) if charge_ratio >= threshold else (60, 60, 60)
+                    (190, 255, 234) if i == 0 else
+                    (162, 255, 203) if i == 1 else
+                    (125, 255, 160) if i == 2 else
+                    (93, 255, 115)
+                ) if charge_ratio >= threshold else (47, 37, 119)
                 pygame.draw.rect(screen, color, rect)
-                pygame.draw.rect(screen, (200, 200, 200), rect, width=1)
+                pygame.draw.rect(screen, (34, 21, 72), rect, width=1)
         
         # Draw player        
         player.draw(screen)

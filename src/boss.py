@@ -138,4 +138,4 @@ class Boss:
 
             # Update player rect
             player.rect.topleft = (player.rect.x, player.rect.y)
-            
+        

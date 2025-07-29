@@ -20,7 +20,7 @@ class ParticleEffect:
 
     def draw(self, screen):
         for p in self.particles:
-            pygame.draw.circle(screen, (255, 180, 80), (int(p[0][0]), int(p[0][1])), int(p[2]))
+            pygame.draw.circle(screen, (56, 72, 192), (int(p[0][0]), int(p[0][1])), int(p[2]))
 
     def is_done(self):
         return len(self.particles) == 0
