@@ -22,7 +22,7 @@ def mainmenu(screen, state):
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:
         print("Stage not found, setting to default stage 1.")
-        stage_mgr.save_stage(4)  # Ensure stage is set to 1 if not found
+        stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
     print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
 
     # Prepare transition intro (fade-in)
@@ -120,12 +120,30 @@ def deadscreen_logic(screen, state):
         "data/artwork/transitions/frame__0015.png",
         "data/artwork/transitions/frame__0016.png"
     ]
+    frame_paths_other = [ #just to work with that like white flash yk
+        "data/artwork/transitions/white_ver/frame__0001.png",
+        "data/artwork/transitions/white_ver/frame__0002.png",
+        "data/artwork/transitions/white_ver/frame__0003.png",
+        "data/artwork/transitions/white_ver/frame__0004.png",
+        "data/artwork/transitions/white_ver/frame__0005.png",
+        "data/artwork/transitions/white_ver/frame__0006.png",
+        "data/artwork/transitions/white_ver/frame__0007.png",
+        "data/artwork/transitions/white_ver/frame__0008.png",
+        "data/artwork/transitions/white_ver/frame__0009.png",
+        "data/artwork/transitions/white_ver/frame__0010.png",
+        "data/artwork/transitions/white_ver/frame__0011.png",
+        "data/artwork/transitions/white_ver/frame__0012.png",
+        "data/artwork/transitions/white_ver/frame__0013.png",
+        "data/artwork/transitions/white_ver/frame__0014.png",
+        "data/artwork/transitions/white_ver/frame__0015.png",
+        "data/artwork/transitions/white_ver/frame__0016.png"
+    ]
 
     # Create intro transition (reverse=False)
-    intro_transition = TiledTransition(frame_paths, screen.get_size(), reverse=True)
+    intro_transition = TiledTransition(frame_paths_other, screen.get_size(), reverse=True)
     
     AudioLoop = SFX("data/sounds/tracks/game_over.mp3")
-    AudioLoop.play()
+    AudioLoop.play(1,1,False,0.5)
 
     # Run intro transition
     clock = pygame.time.Clock()
@@ -181,20 +199,14 @@ def fightingscreen_dialog_logic(screen, state):
     # Load images once
     bg = pygame.image.load("data/artwork/battlingscreen_options.png")
     overlay = pygame.image.load("data/artwork/enemies.png")
-    special_img = pygame.image.load("data/artwork/indication.png")
-
-    special_positions = [(567, 253), (731, 247), (912, 245)]
     
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:
         print("Stage not found, setting to default stage 1.")
-        stage_mgr.save_stage(4)  # Ensure stage is set to 1 if not found
+        stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
     print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
 
     buttons = [
-        Button("ITEMSLOT_1", 622, 296, "data/artwork/itemslot_1.png", 160, 154),
-        Button("ITEMSLOT_2", 793, 300, "data/artwork/itemslot_2.png", 149, 125),
-        Button("ITEMSLOT_3", 964, 297, "data/artwork/itemslot_3.png", 151, 128),
         Button("ATTACK", 28, 27, "data/artwork/attack.png", 601, 232),
         Button("TALK", 674, 27, "data/artwork/talk.png", 601, 232),
         Button("CRY", 1304, 27, "data/artwork/mock.png", 601, 232), #just ref as cry if have time i can change to mock
@@ -219,7 +231,6 @@ def fightingscreen_dialog_logic(screen, state):
 
         for button in buttons:
             screen.blit(button.icon, (button.x, button.y))
-        screen.blit(special_img, special_positions[0])  # default indicator
 
         intro_transition.update()
         intro_transition.draw(screen)
@@ -227,7 +238,6 @@ def fightingscreen_dialog_logic(screen, state):
         pygame.display.flip()
         clock.tick(60)
 
-    selected_special_index = 0
     scaled_up_button_index = None
     last_clicked_button_index = None
     show_dialogbox_example = False
@@ -238,32 +248,25 @@ def fightingscreen_dialog_logic(screen, state):
     isindialouge = False
     enter_pressed_time = None
     outro_transition = None
-    shield = None
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
-
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()
                 for i, button in enumerate(buttons):
                     if button.is_clicked(mouse_pos):
                         last_clicked_button_index = i
-                        if i < 3:
-                            selected_special_index = i
-                            show_dialogbox_example = False
-                        else:
-                            scaled_up_button_index = i
-                            show_dialogbox_example = False
-
+                        scaled_up_button_index = i
+                        show_dialogbox_example = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN and last_clicked_button_index == 3 and not show_dialogbox_example and isindialouge == False: #3 is attack
+                if event.key == pygame.K_RETURN and last_clicked_button_index == 0 and not show_dialogbox_example and isindialouge == False: #0 is attack
                     show_dialogbox_example = True
                     dialogue_manager.queue_dialogue("This is what YOU wanted.", "AMALGAM", type_time=2, stay_time=1, char_sound=word_sound, pitch_factor=0.8)
                     enter_pressed_time = pygame.time.get_ticks()  # start delay timer
                 if stage_mgr.load_stage() == 1:
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example: #4 is talk
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example: #1 is talk
                         isindialouge = True
                         dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8)
                         delayed_call(3, lambda: dialogue_manager.queue_dialogue("Who are you?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
@@ -275,15 +278,15 @@ def fightingscreen_dialog_logic(screen, state):
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(21, end_dialogue)
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example: #5 is mock
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example: #2 is mock
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Hmph, I guess I can't mock them..", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        dialogue_manager.queue_dialogue("Hmph, I guess I shouldn't mock them..", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(4, end_dialogue)
                 elif stage_mgr.load_stage() == 2:
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example: #4 is talk
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example: #1 is talk
                         isindialouge = True
                         dialogue_manager.queue_dialogue("I don't want to hurt you. Please stop attacking me.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         delayed_call(4, lambda: dialogue_manager.queue_dialogue("No.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
@@ -300,7 +303,7 @@ def fightingscreen_dialog_logic(screen, state):
                             isindialouge = False
                             stage_mgr.save_stage(7) #To save they talked.
                         delayed_call(37, end_dialogue)
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example: #5 is mock
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example: #2 is mock
                         isindialouge = True
                         dialogue_manager.queue_dialogue("You're an ugly bastard aren't you?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         delayed_call(4, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
@@ -314,7 +317,7 @@ def fightingscreen_dialog_logic(screen, state):
                             stage_mgr.save_stage(8) #To give the shield.
                         delayed_call(22.5, end_dialogue)
                 elif stage_mgr.load_stage() == 4: # Stage 4 is they talked
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example: #4 is talk
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example: #1 is talk
                         isindialouge = True
                         dialogue_manager.queue_dialogue("I don't want to hurt you. Please stop attacking me.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         delayed_call(4, lambda: dialogue_manager.queue_dialogue("My food, my consumption, my existence requires.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
@@ -340,21 +343,21 @@ def fightingscreen_dialog_logic(screen, state):
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(77, end_dialogue)
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example:
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example:
                         isindialouge = True
                         dialogue_manager.queue_dialogue("Hmph mocking him will only make the situation worse.", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                 elif stage_mgr.load_stage() == 5: #5 = they mocked b4
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example:
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example:
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Whats the point in talking to this loser anyway?", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        dialogue_manager.queue_dialogue("What's the point in talking to this loser anyway?", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(2, end_dialogue)
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example: #5 is mock
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example: #2 is mock
                         isindialouge = True
                         dialogue_manager.queue_dialogue("Awww, is someone dying? Are you in pain?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         delayed_call(4, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
@@ -377,16 +380,16 @@ def fightingscreen_dialog_logic(screen, state):
                             isindialouge = False
                         delayed_call(60, end_dialogue)
                 elif stage_mgr.load_stage() == 7 or stage_mgr.load_stage() == 8 or stage_mgr.load_stage() == 3: #4/5/3
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 4 and isindialouge == False and not show_dialogbox_example:
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example:
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Whats the point...", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        dialogue_manager.queue_dialogue("What's the point...", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
                         delayed_call(5, end_dialogue)
-                    if event.key == pygame.K_RETURN and last_clicked_button_index == 5 and isindialouge == False and not show_dialogbox_example: #5 is mock
+                    if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example: #2 is mock
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Whats the point...", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        dialogue_manager.queue_dialogue("What's the point...", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
@@ -396,14 +399,11 @@ def fightingscreen_dialog_logic(screen, state):
         screen.blit(overlay, (1475, 296))
 
         for i, button in enumerate(buttons):
-            if i >= 3 and i == scaled_up_button_index:
+            if i == scaled_up_button_index:
                 enlarged = pygame.transform.scale(button.icon, (button.width + 30, button.height + 30))
                 screen.blit(enlarged, (button.x - 15, button.y - 15))
             else:
                 screen.blit(button.icon, (button.x, button.y))
-
-        if selected_special_index is not None:
-            screen.blit(special_img, special_positions[selected_special_index])
 
         if show_dialogbox_example:
             # After 3 seconds, start outro if not started yet
@@ -559,7 +559,6 @@ def battle_screen_01(screen, state):
                         repressendingpotential = False
                     elif current_weapon == "sword":
                         sword.attack()
-                        repressendingpotential = False
                     elif current_weapon == "throwable":
                         try:
                             if throwable.iscooldowndone == True:
@@ -770,10 +769,18 @@ def battle_screen_01(screen, state):
         if boss.check_player_collision(player):
             player.take_damage(10)
         boss.draw(screen)
-        pygame.draw.rect(screen, (255, 0, 0), boss.rect, 2)
-        pygame.draw.rect(screen, (0, 255, 0), player.rect, 2)
 
         if player.health <= 0:
+        # Flash white fade-in and fade-out
+            fade_surface = pygame.Surface(screen.get_size())
+            fade_surface.fill((255, 255, 255))
+
+            for alpha in range(0, 200, 8):  # Fade in
+                fade_surface.set_alpha(alpha)
+                screen.blit(fade_surface, (0, 0))
+                pygame.display.flip()
+                pygame.time.delay(5)
+
             print("Player is dead!")
             battlesong.stop()
             return "deadscreen"
@@ -883,6 +890,7 @@ def battle_screen_01(screen, state):
             # Check collision with boss:
             if sword.check_hit(boss):
                 print("Boss hit by sword!")
+                repressendingpotential = False
                 if stage_mgr.load_stage == 3 or stage_mgr.load_stage == 4 or stage_mgr.load_stage == 5:
                     if boss.health >= 100:
                         print('no')

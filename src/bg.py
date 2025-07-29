@@ -10,7 +10,7 @@ class GlitchyArena:
         self.glitch_active = False
 
     def trigger_glitch(self):
-        if random.random() < 0.01:  # 1% chance per frame
+        if random.random() < 0.10:  # 10% chance per frame
             self.glitch_timer = random.randint(5, 15)
             self.glitch_active = True
 

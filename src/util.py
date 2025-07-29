@@ -90,17 +90,19 @@ class SFX:
         self.sample_rate = pygame.mixer.get_init()[0]
         self.loop_thread = None
         self._stop_loop = threading.Event()
+        self.channel = None  # Track current channel
 
     def _play_loop(self, new_sound_array):
         new_sound = pygame.sndarray.make_sound(new_sound_array)
         while not self._stop_loop.is_set():
-            channel = new_sound.play()
+            self.channel = new_sound.play()
             length_ms = int(1000 * new_sound.get_length())
             elapsed = 0
             check_interval = 50  # ms
             while elapsed < length_ms:
                 if self._stop_loop.is_set():
-                    channel.stop()
+                    if self.channel:
+                        self.channel.stop()
                     return
                 pygame.time.wait(check_interval)
                 elapsed += check_interval
@@ -108,7 +110,7 @@ class SFX:
     def play(self, min_pitch=1.0, max_pitch=1.0, loop=False, volume=1.0):
         pitch = random.uniform(min_pitch, max_pitch)
         if pitch == 1.0 and not loop and volume == 1.0:
-            self.original_sound.play()
+            self.channel = self.original_sound.play()
             return
 
         sound_array = self.sound_array
@@ -138,18 +140,20 @@ class SFX:
         else:
             new_sound = pygame.sndarray.make_sound(new_sound_array)
             new_sound.set_volume(volume)
-            new_sound.play()
+            self.channel = new_sound.play()
 
     def stop(self):
         self._stop_loop.set()
         if self.loop_thread and self.loop_thread.is_alive():
-            # Use timeout so join doesn't block forever
             self.loop_thread.join(timeout=0.1)
         self.loop_thread = None
-        self.original_sound.stop()
 
-    def set_volume(self, volume):
-        self.original_sound.set_volume(volume)
+        # Stop any currently playing channel
+        if self.channel and self.channel.get_busy():
+            self.channel.stop()
+            self.channel = None
+
+        self.original_sound.stop()
 
 def delayed_call(delay, func, *args, **kwargs):
     wrapped = functools.partial(func, *args, **kwargs) # I FUCKING HATE THREADS SO FUCKING MUCH AHHHHHHHHHHHHH

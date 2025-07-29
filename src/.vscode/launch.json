@@ -4,10 +4,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: windowmain",
+      "name": "Python: main",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/windowmain.py",
+      "program": "${workspaceFolder}/main.py",
       "console": "integratedTerminal"
     }
   ]

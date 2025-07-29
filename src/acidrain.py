@@ -3,17 +3,22 @@ import random
 import time
 
 class AcidDrop:
-    def __init__(self, x, arena_rect, fall_speed=6, color=(0, 255, 100)):
-        self.width = 12
-        self.height = 60
-        self.color = color
-        self.fall_speed = fall_speed #falls almost like my career heh
+    def __init__(self, x, arena_rect, fall_speed=7, image_path='data/artwork/aciddroplet.png'):
+        self.original_width = 12
+        self.original_height = 60
+        self.width = self.original_width * 1.8
+        self.height = self.original_height * 1.8
+        self.fall_speed = fall_speed
         self.x = x
         self.y = arena_rect.top
         self.arena_rect = arena_rect
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.has_landed = False
         self.puddle_spawned = False
+
+        # Load and scale the image
+        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
     def update(self):
         if not self.has_landed:
@@ -24,35 +29,39 @@ class AcidDrop:
         self.rect.topleft = (self.x, self.y)
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
-
+        screen.blit(self.image, self.rect)
 
 class AcidPuddle:
-    def __init__(self, x, arena_rect, duration=2.5, damage=5, color=(0, 200, 100)):
-        self.width = 80
-        self.height = 20
-        self.color = color  # bright green
-        self.x = max(arena_rect.left, min(x, arena_rect.right - 80))
-        self.y = arena_rect.bottom - self.height
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.spawn_time = time.time()
+    def __init__(self, x, arena_rect, duration=2.5, damage=5, image_path='data/artwork/acidpuddle.png'):
+        self.original_width = 80
+        self.original_height = 20
+        self.width = self.original_width * 1.3
+        self.height = self.original_height * 1.3
         self.duration = duration
         self.damage = damage
         self.active = True
         self.has_damaged = set()
+        self.spawn_time = time.time()
+
+        self.x = max(arena_rect.left, min(x, arena_rect.right - self.width))
+        self.y = arena_rect.bottom - self.height
+
+        # Load and scale the image
+        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
     def update(self):
         if time.time() - self.spawn_time > self.duration:
             self.active = False
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
+        screen.blit(self.image, self.rect)
 
     def check_collision(self, player):
         if self.active and self.rect.colliderect(player.rect):
-            if player not in self.has_damaged:
-                player.take_damage(self.damage)
-
+            player.take_damage(self.damage)
+                
 class AcidRainAttack:
     def __init__(self, arena_rect, player, spawn_delay=0.5):
         self.arena_rect = arena_rect

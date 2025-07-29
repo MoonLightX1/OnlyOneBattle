@@ -53,22 +53,21 @@ class Sword:
         self.hitbox_rect.center = self.hitbox_center
 
     def draw(self, surface):
-        if self.active:
-            # Position the sword image
-            if self.owner.facing_right:
-                sword_pos = (
-                    self.owner.rect.right,
-                    self.owner.rect.y + (self.owner.rect.height - self.height) // 2
-                )
-                sword_img = self.original_image
-            else:
-                sword_pos = (
-                    self.owner.rect.left - self.width,
-                    self.owner.rect.y + (self.owner.rect.height - self.height) // 2
-                )
-                sword_img = pygame.transform.flip(self.original_image, True, False)
+        # Position the sword image
+        if self.owner.facing_right:
+            sword_pos = (
+                self.owner.rect.right,
+                self.owner.rect.y + (self.owner.rect.height - self.height) // 2
+            )
+            sword_img = self.original_image
+        else:
+            sword_pos = (
+                self.owner.rect.left - self.width,
+                self.owner.rect.y + (self.owner.rect.height - self.height) // 2
+            )
+            sword_img = pygame.transform.flip(self.original_image, True, False)
 
-            surface.blit(sword_img, sword_pos)
+        surface.blit(sword_img, sword_pos)
 
     def check_hit(self, boss):
         if not self.active:

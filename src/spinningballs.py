@@ -1,5 +1,4 @@
 import pygame
-import random
 from vfx import ParticleEffect
 
 class SpinningBall:
@@ -12,7 +11,7 @@ class SpinningBall:
         self.angle = 0
         self.rotation_speed = 10  # degrees per frame
         self.image_original = pygame.Surface((self.radius*2, self.radius*2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image_original, (255, 255, 0), (self.radius, self.radius), self.radius)
+        pygame.draw.circle(self.image_original, (255, 111, 0), (self.radius, self.radius), self.radius)
         self.arena_rect = arena_rect
         self.rect = pygame.Rect(self.x - self.radius, self.y - self.radius, self.radius * 2, self.radius * 2)
         self.alive = True
