@@ -198,7 +198,6 @@ def fightingscreen_dialog_logic(screen, state):
 
     # Load images once
     bg = pygame.image.load("data/artwork/battlingscreen_options.png")
-    overlay = pygame.image.load("data/artwork/enemies.png")
     
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:
@@ -207,7 +206,7 @@ def fightingscreen_dialog_logic(screen, state):
     print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
     
     buttonSFX = SFX("data/sounds/swap item sfx.mp3")
-    changeSFX = SFX("data/sounds/button hover sfx.wav")
+    changeSFX = SFX("data/sounds/button hover sfx.mp3")
 
     buttons = [
         Button("ATTACK", 28, 27, "data/artwork/attack.png", 601, 232),
@@ -230,7 +229,6 @@ def fightingscreen_dialog_logic(screen, state):
                 return "quit"
 
         screen.blit(bg, (0, 0))
-        screen.blit(overlay, (1475, 296))
 
         for button in buttons:
             screen.blit(button.icon, (button.x, button.y))
@@ -260,19 +258,19 @@ def fightingscreen_dialog_logic(screen, state):
                 mouse_pos = pygame.mouse.get_pos()
                 for i, button in enumerate(buttons):
                     if button.is_clicked(mouse_pos):
-                        changeSFX.play(0.6,1.5,False,5)
+                        changeSFX.play(0.6,1.5,False,0.5)
                         last_clicked_button_index = i
                         scaled_up_button_index = i
                         show_dialogbox_example = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN and last_clicked_button_index == 0 and not show_dialogbox_example and isindialouge == False: #0 is attack
-                    buttonSFX.play(0.6,1.5,False,0.8)
+                    buttonSFX.play(0.6,1.5,False,0.4)
                     show_dialogbox_example = True
                     dialogue_manager.queue_dialogue("This is what YOU wanted.", "AMALGAM", type_time=2, stay_time=1, char_sound=word_sound, pitch_factor=0.8)
                     enter_pressed_time = pygame.time.get_ticks()  # start delay timer
                 if stage_mgr.load_stage() == 1:
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example: #1 is talk
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8)
                         delayed_call(3, lambda: dialogue_manager.queue_dialogue("Who are you?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
@@ -285,7 +283,7 @@ def fightingscreen_dialog_logic(screen, state):
                             isindialouge = False
                         delayed_call(21, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example: #2 is mock
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("Hmph, I guess I shouldn't mock them..", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
@@ -294,7 +292,7 @@ def fightingscreen_dialog_logic(screen, state):
                         delayed_call(4, end_dialogue)
                 elif stage_mgr.load_stage() == 2:
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example: #1 is talk
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("I don't want to hurt you. Please stop attacking me.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         delayed_call(4, lambda: dialogue_manager.queue_dialogue("No.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
@@ -312,7 +310,7 @@ def fightingscreen_dialog_logic(screen, state):
                             stage_mgr.save_stage(7) #To save they talked.
                         delayed_call(37, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example: #2 is mock
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("You're an ugly bastard aren't you?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         delayed_call(4, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
@@ -327,7 +325,7 @@ def fightingscreen_dialog_logic(screen, state):
                         delayed_call(22.5, end_dialogue)
                 elif stage_mgr.load_stage() == 4: # Stage 4 is they talked
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example: #1 is talk
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("I don't want to hurt you. Please stop attacking me.", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         delayed_call(4, lambda: dialogue_manager.queue_dialogue("My food, my consumption, my existence requires.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
@@ -354,7 +352,7 @@ def fightingscreen_dialog_logic(screen, state):
                             isindialouge = False
                         delayed_call(77, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example:
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("Hmph mocking him will only make the situation worse.", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
@@ -362,7 +360,7 @@ def fightingscreen_dialog_logic(screen, state):
                             isindialouge = False
                 elif stage_mgr.load_stage() == 5: #5 = they mocked b4
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example:
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("What's the point in talking to this loser anyway?", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
@@ -370,7 +368,7 @@ def fightingscreen_dialog_logic(screen, state):
                             isindialouge = False
                         delayed_call(2, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example: #2 is mock
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("Awww, is someone dying? Are you in pain?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         delayed_call(4, lambda: dialogue_manager.queue_dialogue("...", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
@@ -394,7 +392,7 @@ def fightingscreen_dialog_logic(screen, state):
                         delayed_call(60, end_dialogue)
                 elif stage_mgr.load_stage() == 7 or stage_mgr.load_stage() == 8 or stage_mgr.load_stage() == 3: #4/5/3
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 1 and isindialouge == False and not show_dialogbox_example:
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("What's the point...", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
@@ -402,7 +400,7 @@ def fightingscreen_dialog_logic(screen, state):
                             isindialouge = False
                         delayed_call(5, end_dialogue)
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example: #2 is mock
-                        buttonSFX.play(0.6,1.5,False,0.8)
+                        buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
                         dialogue_manager.queue_dialogue("What's the point...", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
@@ -411,7 +409,6 @@ def fightingscreen_dialog_logic(screen, state):
                         delayed_call(5, end_dialogue)
 
         screen.blit(bg, (0, 0))
-        screen.blit(overlay, (1475, 296))
 
         for i, button in enumerate(buttons):
             if i == scaled_up_button_index:
@@ -451,7 +448,6 @@ def battle_screen_01(screen, state):
     seconds_left = 0
     clock = pygame.time.Clock()
     background = pygame.image.load("data/artwork/battlegroundbase.png")
-    overlay = pygame.image.load("data/artwork/enemies_battling.png")
     arena_bg = GlitchyArena("data/artwork/arena.png", (401, 624))
     arena_rect = pygame.Rect(401, 624, 1045, 456)
     player = Player(arena_rect.centerx - 25, arena_rect.bottom - 50, 50, 50, arena_rect)
@@ -547,12 +543,12 @@ def battle_screen_01(screen, state):
     lvlcomplete = SFX("data/sounds/level completed.mp3")
     shootSFX = SFX("data/sounds/shoot sfx.mp3")
     rocketSFX = SFX("data/sounds/rocket sfx.mp3")
-    
+    limbsfx = SFX("data/sounds/limb sfx.mp3")
+    heartpumpySFX = SFX("data/sounds/heart pump sfx.mp3") #heh funny name
     acidrainSFX = SFX("data/sounds/acid rain sfx.mp3")
 
     while not transition.is_done():
         screen.blit(background, (0, 0))
-        screen.blit(overlay, (249, 57))
         pygame.draw.rect(screen, (0, 0, 0), arena_rect)
         for wall in walls:
             pygame.draw.rect(screen, (100, 100, 100), wall)
@@ -644,9 +640,11 @@ def battle_screen_01(screen, state):
 
                         for height_rank in range(8):
                             splash_x = 1240 + height_rank * spacing
+                            limbsfx.play(0.6,1.5,False,0.5)
                             wave_splash_list.append(WaveSplashRect(splash_x, arena_rect, height_rank, width=splash_width))
                     elif action_other == 2:
                         print("Boss uses: Flappy Birf")
+                        limbsfx.play(0.6,1.5,False,0.5)
                         flappybirds.append(
                                 FlappyBird(x=1266, arena_rect=arena_rect)
                             )
@@ -706,6 +704,7 @@ def battle_screen_01(screen, state):
                         spacing = splash_width + gap  # 26 px between start of one splash to next
                         for height_rank in range(8):
                             splash_x = 1240 + height_rank * spacing
+                            limbsfx.play(0.6,1.5,False,0.5)
                             wave_splash_list.append(WaveSplashRect(splash_x, arena_rect, height_rank, width=splash_width))
                     elif action_other == 2:
                         print("Boss uses: Spinning Balls")
@@ -743,7 +742,6 @@ def battle_screen_01(screen, state):
             print("No longer capable of doing RepressEnding!")
 
         screen.blit(background, (0, 0))
-        screen.blit(overlay, (249, 57))
         arena_bg.update()
         arena_bg.draw(screen)
         # Boss intro warning text
@@ -751,6 +749,7 @@ def battle_screen_01(screen, state):
             elapsed = pygame.time.get_ticks() - intro_start_time
             if elapsed >= intro_total_duration:
                 intro_display = False
+                heartpumpySFX.play(0.6,1.5,True,0.9)
             else:
                 warning_text = font_large.render("! BOSS INCOMING !", True, (255, 140, 0))
                 warning_surface = warning_text.convert_alpha()
@@ -792,6 +791,7 @@ def battle_screen_01(screen, state):
                     if boss.health < 0:
                         print("Save Ending, boss not defeated")
                         battlesong.stop()
+                        heartpumpySFX.stop()
                         return "mainmenu" # replace blah blah
 
         #boss
@@ -801,21 +801,25 @@ def battle_screen_01(screen, state):
                 stage_mgr.save_stage(2) 
                 lvlcomplete.play(0.6,1.5,False,0.8)
                 battlesong.stop()
+                heartpumpySFX.stop()
                 return "fighting_dialog"
             elif boss.health <= 100 and stage_mgr.load_stage() == 2 or stage_mgr.load_stage() == 8 or stage_mgr.load_stage() == 7:
                 stage_mgr.save_stage(3)
                 lvlcomplete.play(0.6,1.5,False,0.8)
                 battlesong.stop()
+                heartpumpySFX.stop()
                 return "fighting_dialog"
             elif boss.health <= 0 and stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:
                 lvlcomplete.play(0.6,1.5,False,0.8)
                 if repressendingpotential == True:
                     print("Boss defeated! | Repress Ending")
                     battlesong.stop()
+                    heartpumpySFX.stop()
                     return "main_menu"
                 else:
                     print("Boss defeated! | Killer Ending") #
                     battlesong.stop()
+                    heartpumpySFX.stop()
                     return "main_menu"
             boss.resolve_collision_with_player(player)
             boss.check_bullet_collisions(vfx_list, damage=5, vfx_list=vfx_list)  # assuming bullets in vfx_list
@@ -833,6 +837,7 @@ def battle_screen_01(screen, state):
                 pygame.time.delay(5)
 
             print("Player is dead!")
+            heartpumpySFX.stop()
             battlesong.stop()
             return "deadscreen"
         
@@ -1001,6 +1006,303 @@ def battle_screen_01(screen, state):
         pygame.display.flip()
         clock.tick(60) #HOLY GYATT THIS IS A LOT OF CODE :#moneyface:
 
+def ending_kill(screen, state):
+    main_image = pygame.image.load("data/artwork/kill_ending.png")
+
+    stage_mgr = StageManager()
+    if stage_mgr.load_stage() == None:
+        print("Stage not found, setting to default stage 1.")
+        stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
+    print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
+
+    my_font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)
+    dialogue_manager = DialogueManager(font=my_font, screen=screen)
+    isindialouge = False
+    pygame.mixer.init()
+    word_sound = pygame.mixer.Sound("data/sounds/voice.WAV")
+
+    # Prepare transition intro (fade-in)
+    frame_paths = [
+        "data/artwork/transitions/frame__0001.png",
+        "data/artwork/transitions/frame__0002.png",
+        "data/artwork/transitions/frame__0003.png",
+        "data/artwork/transitions/frame__0004.png",
+        "data/artwork/transitions/frame__0005.png",
+        "data/artwork/transitions/frame__0006.png",
+        "data/artwork/transitions/frame__0007.png",
+        "data/artwork/transitions/frame__0008.png",
+        "data/artwork/transitions/frame__0009.png",
+        "data/artwork/transitions/frame__0010.png",
+        "data/artwork/transitions/frame__0011.png",
+        "data/artwork/transitions/frame__0012.png",
+        "data/artwork/transitions/frame__0013.png",
+        "data/artwork/transitions/frame__0014.png",
+        "data/artwork/transitions/frame__0015.png",
+        "data/artwork/transitions/frame__0016.png"
+    ]
+
+    # Create intro transition (reverse=False)
+    intro_transition = TiledTransition(frame_paths, screen.get_size(), reverse=True)
+    
+    AudioLoop = SFX("data/sounds/tracks/ending_01.mp3")
+    AudioLoop.play(1,1,True,0.5)
+
+    # Run intro transition
+    clock = pygame.time.Clock()
+    while not intro_transition.is_done():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+        screen.blit(main_image, (0, 0))
+        intro_transition.update()
+        intro_transition.draw(screen)
+        pygame.display.flip()
+        clock.tick(60)
+
+    screen.blit(main_image, (0, 0))
+    pygame.display.flip()
+
+    # Wait time tracking
+    leavinshi = [False]
+
+    # Prepare outro transition (fade-out, reverse=True)
+    outro_transition = TiledTransition(frame_paths, screen.get_size(), reverse=False)
+
+    running = True
+    while running:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+
+        if leavinshi[0]:
+            # Run outro transition
+            if not outro_transition.is_done():
+                screen.blit(main_image, (0, 0))
+                outro_transition.update()
+                outro_transition.draw(screen)
+                pygame.display.flip()
+            else:
+                # After fade-out, change state
+                state.change("credits")
+                AudioLoop.stop()
+                return "stay"
+        else:
+            # Still waiting, just show main image
+            screen.blit(main_image, (0, 0))
+            if isindialouge == False:
+                print('f')
+                isindialouge = True
+                delayed_call(2, lambda: dialogue_manager.queue_dialogue("You stand high above the corpse of the     past.", "???", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(6, lambda: dialogue_manager.queue_dialogue("You've done it, you've freed yourself,     killed that grand reminder.", "???", type_time=4, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(12, lambda: dialogue_manager.queue_dialogue("The world is right...", "???", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(17, lambda: dialogue_manager.queue_dialogue("If only you could change the past...", "???", type_time=5, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(24, lambda: dialogue_manager.queue_dialogue("Maybe then...", "???", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(28, lambda: dialogue_manager.queue_dialogue("They wouldn't have passed.", "???", type_time=4, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(35, lambda: leavinshi.__setitem__(0, True))
+        dialogue_manager.update()
+        dialogue_manager.draw()
+        pygame.display.flip()
+        clock.tick(60)
+
+def ending_repress(screen, state):
+    main_image = pygame.image.load("data/artwork/repress_ending.png")
+
+    stage_mgr = StageManager()
+    if stage_mgr.load_stage() == None:
+        print("Stage not found, setting to default stage 1.")
+        stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
+    print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
+
+    my_font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)
+    dialogue_manager = DialogueManager(font=my_font, screen=screen)
+    isindialouge = False
+    pygame.mixer.init()
+    word_sound = pygame.mixer.Sound("data/sounds/voice.WAV")
+
+    # Prepare transition intro (fade-in)
+    frame_paths = [
+        "data/artwork/transitions/frame__0001.png",
+        "data/artwork/transitions/frame__0002.png",
+        "data/artwork/transitions/frame__0003.png",
+        "data/artwork/transitions/frame__0004.png",
+        "data/artwork/transitions/frame__0005.png",
+        "data/artwork/transitions/frame__0006.png",
+        "data/artwork/transitions/frame__0007.png",
+        "data/artwork/transitions/frame__0008.png",
+        "data/artwork/transitions/frame__0009.png",
+        "data/artwork/transitions/frame__0010.png",
+        "data/artwork/transitions/frame__0011.png",
+        "data/artwork/transitions/frame__0012.png",
+        "data/artwork/transitions/frame__0013.png",
+        "data/artwork/transitions/frame__0014.png",
+        "data/artwork/transitions/frame__0015.png",
+        "data/artwork/transitions/frame__0016.png"
+    ]
+
+    # Create intro transition (reverse=False)
+    intro_transition = TiledTransition(frame_paths, screen.get_size(), reverse=True)
+    
+    AudioLoop = SFX("data/sounds/tracks/ending_01.mp3")
+    AudioLoop.play(1,1,True,0.5)
+
+    # Run intro transition
+    clock = pygame.time.Clock()
+    while not intro_transition.is_done():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+        screen.blit(main_image, (0, 0))
+        intro_transition.update()
+        intro_transition.draw(screen)
+        pygame.display.flip()
+        clock.tick(60)
+
+    screen.blit(main_image, (0, 0))
+    pygame.display.flip()
+
+    # Wait time tracking
+    leavinshi = [False]
+
+    # Prepare outro transition (fade-out, reverse=True)
+    outro_transition = TiledTransition(frame_paths, screen.get_size(), reverse=False)
+
+    running = True
+    while running:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+
+        if leavinshi[0]:
+            # Run outro transition
+            if not outro_transition.is_done():
+                screen.blit(main_image, (0, 0))
+                outro_transition.update()
+                outro_transition.draw(screen)
+                pygame.display.flip()
+            else:
+                # After fade-out, change state
+                state.change("credits")
+                AudioLoop.stop()
+                return "stay"
+        else:
+            # Still waiting, just show main image
+            screen.blit(main_image, (0, 0))
+            if isindialouge == False:
+                print('f')
+                isindialouge = True
+                delayed_call(2, lambda: dialogue_manager.queue_dialogue("You killed it.", "???", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(6, lambda: dialogue_manager.queue_dialogue("Your inaction has beaten your enemy...", "???", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(10, lambda: dialogue_manager.queue_dialogue("Over the years what have you done?", "???", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(15, lambda: dialogue_manager.queue_dialogue("Ran? Hide? Evaded it all?", "???", type_time=5, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(22, lambda: dialogue_manager.queue_dialogue("Did avoiding bring any of them back?", "???", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(26, lambda: dialogue_manager.queue_dialogue("You ponder the future without them...", "???", type_time=4, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(33, lambda: leavinshi.__setitem__(0, True))
+        dialogue_manager.update()
+        dialogue_manager.draw()
+        pygame.display.flip()
+        clock.tick(60)
+        
+def ending_save(screen, state):
+    main_image = pygame.image.load("data/artwork/save_ending.png")
+
+    stage_mgr = StageManager()
+    if stage_mgr.load_stage() == None:
+        print("Stage not found, setting to default stage 1.")
+        stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
+    print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
+
+    my_font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)
+    dialogue_manager = DialogueManager(font=my_font, screen=screen)
+    isindialouge = False
+    pygame.mixer.init()
+    word_sound = pygame.mixer.Sound("data/sounds/voice.WAV")
+
+    # Prepare transition intro (fade-in)
+    frame_paths = [
+        "data/artwork/transitions/frame__0001.png",
+        "data/artwork/transitions/frame__0002.png",
+        "data/artwork/transitions/frame__0003.png",
+        "data/artwork/transitions/frame__0004.png",
+        "data/artwork/transitions/frame__0005.png",
+        "data/artwork/transitions/frame__0006.png",
+        "data/artwork/transitions/frame__0007.png",
+        "data/artwork/transitions/frame__0008.png",
+        "data/artwork/transitions/frame__0009.png",
+        "data/artwork/transitions/frame__0010.png",
+        "data/artwork/transitions/frame__0011.png",
+        "data/artwork/transitions/frame__0012.png",
+        "data/artwork/transitions/frame__0013.png",
+        "data/artwork/transitions/frame__0014.png",
+        "data/artwork/transitions/frame__0015.png",
+        "data/artwork/transitions/frame__0016.png"
+    ]
+
+    # Create intro transition (reverse=False)
+    intro_transition = TiledTransition(frame_paths, screen.get_size(), reverse=True)
+    
+    AudioLoop = SFX("data/sounds/tracks/ending_02.mp3")
+    AudioLoop.play(1,1,True,0.5)
+
+    # Run intro transition
+    clock = pygame.time.Clock()
+    while not intro_transition.is_done():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+        screen.blit(main_image, (0, 0))
+        intro_transition.update()
+        intro_transition.draw(screen)
+        pygame.display.flip()
+        clock.tick(60)
+
+    screen.blit(main_image, (0, 0))
+    pygame.display.flip()
+
+    # Wait time tracking
+    leavinshi = [False]
+
+    # Prepare outro transition (fade-out, reverse=True)
+    outro_transition = TiledTransition(frame_paths, screen.get_size(), reverse=False)
+
+    running = True
+    while running:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+
+        if leavinshi[0]:
+            # Run outro transition
+            if not outro_transition.is_done():
+                screen.blit(main_image, (0, 0))
+                outro_transition.update()
+                outro_transition.draw(screen)
+                pygame.display.flip()
+            else:
+                # After fade-out, change state
+                state.change("credits")
+                AudioLoop.stop()
+                return "stay"
+        else:
+            # Still waiting, just show main image
+            screen.blit(main_image, (0, 0))
+            if isindialouge == False:
+                print('f')
+                isindialouge = True
+                delayed_call(2, lambda: dialogue_manager.queue_dialogue("Acceptance. The final step. I bet it was hard.", "???", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(7, lambda: dialogue_manager.queue_dialogue("I hope you're able to stay in acceptance.", "???", type_time=4, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(12, lambda: dialogue_manager.queue_dialogue("But its no personal failure to start over again and you might.", "???", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(17, lambda: dialogue_manager.queue_dialogue("The old photo, those old gifts, all leading you to somewhere to forget.", "???", type_time=5, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(24, lambda: dialogue_manager.queue_dialogue("A lot will happen to remind you of those times.", "???", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(29, lambda: dialogue_manager.queue_dialogue("I'm glad this time however, you didn't kill the boss. Good job.", "???", type_time=4, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(35, lambda: leavinshi.__setitem__(0, True))
+        dialogue_manager.update()
+        dialogue_manager.draw()
+        pygame.display.flip()
+        clock.tick(60)
+
 def creditslogic(screen, state):
     main_image = pygame.image.load("data/artwork/credits_scene.png")
 
@@ -1060,14 +1362,12 @@ def creditslogic(screen, state):
 
     running = True
     while running:
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     leavinshi = True
-
         if leavinshi:
             # Run outro transition
             if not outro_transition.is_done():

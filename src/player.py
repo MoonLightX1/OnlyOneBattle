@@ -49,6 +49,7 @@ class Player:
         self.deathSFX = SFX("data/sounds/death sfx.mp3")
         self.chargeSFX = SFX("data/sounds/charge sfx.mp3")
         self.shootSFX = SFX("data/sounds/shoot sfx.mp3")
+        self.chargereleaseSFX = SFX("data/sounds/charge release sfx.mp3")
 
     def handle_input(self, keys):
         if keys[pygame.K_LEFT]:
@@ -72,7 +73,7 @@ class Player:
             self.last_damage_time = now
             print(f"Player took {amount} damage! Health now: {self.health}")
             if self.health <= 0:
-                self.deathSFX.play(0.6,1.5,False,0.9)
+                self.deathSFX.play(1,1,False,1.5)
                 self.chargeSFX.stop()
                 self.shootSFX.stop()
                 self.health = 0
@@ -86,6 +87,7 @@ class Player:
         if not self.charging:
             return
         self.charging = False
+        self.chargereleaseSFX.play(0.6,1.5,False,0.7)
         self.shootSFX.play(1,1,False,1)
         self.chargeSFX.stop()
 
@@ -192,6 +194,7 @@ class Player:
     def stop_current_sfx(self):
         self.chargeSFX.stop()
         self.shootSFX.stop()
+        self.chargereleaseSFX.stop()
 
     def draw(self, screen):
         # Flip if facing left

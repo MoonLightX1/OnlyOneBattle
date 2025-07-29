@@ -3,7 +3,7 @@ from gamelogic import *
 
 class GameState:
     def __init__(self):
-        self.current = "fighting_dialog"  # Initial state
+        self.current = "main_menu"  # Initial state
         self.pending = False
 
     def change(self, next_state):
@@ -30,6 +30,12 @@ def run_game(screen):
             result = deadscreen_logic(screen, state)
         elif state.current == "credits":
             result = creditslogic(screen, state)
+        elif state.current == "repress":
+            result = ending_repress(screen, state)
+        elif state.current == "kill":
+            result = ending_kill(screen, state)
+        elif state.current == "save":
+            result = ending_save(screen, state)
         elif state.current == "quit":
             break
         else:
@@ -44,6 +50,7 @@ def run_game(screen):
         clock.tick(60)
 
 if __name__ == "__main__":
+    
     pygame.init()
     screen = pygame.display.set_mode((1920, 1080))
     pygame.display.set_caption("OnlyOneBattle")
