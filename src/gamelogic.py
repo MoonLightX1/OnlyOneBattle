@@ -213,11 +213,11 @@ def fightingscreen_dialog_logic(screen, state):
         Button("TALK", 674, 27, "data/artwork/talk.png", 601, 232),
         Button("CRY", 1304, 27, "data/artwork/mock.png", 601, 232), #just ref as cry if have time i can change to mock
     ]
-    my_font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)
+    my_font = pygame.font.Font(resource_path("data/fonts/vcrosdneue.ttf"), 30)
     dialogue_manager = DialogueManager(font=my_font, screen=screen)
 
     pygame.mixer.init()
-    word_sound = pygame.mixer.Sound("data/sounds/voice.WAV")
+    word_sound = pygame.mixer.Sound(resource_path("data/sounds/voice.WAV"))
 
     frames = [f"data/artwork/transitions/frame__{str(i).zfill(4)}.png" for i in range(1, 17)]
 
@@ -483,7 +483,7 @@ def battle_screen_01(screen, state):
     active_rocket_attacks = []
     acid_attack = None
     
-    font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)  # 30pt size
+    font = pygame.font.Font(resource_path("data/fonts/vcrosdneue.ttf"), 30)  # 30pt size
     
     boss_attack_timer = 0
     attack_interval = 95 # milliseconds / 95 for first, 120 for second, 120 for the third
@@ -538,7 +538,7 @@ def battle_screen_01(screen, state):
     intro_start_time = pygame.time.get_ticks()
     intro_total_duration = 10000  # 10 seconds
     intro_flash_duration = 6000   # Flashing for 6 seconds, then fade for 4 seconds
-    font_large = pygame.font.Font("data/fonts/vcrosdneue.ttf", 72)
+    font_large = pygame.font.Font(resource_path("data/fonts/vcrosdneue.ttf"), 72)
 
     lvlcomplete = SFX("data/sounds/level completed.mp3")
     shootSFX = SFX("data/sounds/shoot sfx.mp3")
@@ -1015,11 +1015,11 @@ def ending_kill(screen, state):
         stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
     print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
 
-    my_font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)
+    my_font = pygame.font.Font(resource_path("data/fonts/vcrosdneue.ttf"), 30)
     dialogue_manager = DialogueManager(font=my_font, screen=screen)
     isindialouge = False
     pygame.mixer.init()
-    word_sound = pygame.mixer.Sound("data/sounds/voice.WAV")
+    word_sound = pygame.mixer.Sound(resource_path("data/sounds/voice.WAV"))
 
     # Prepare transition intro (fade-in)
     frame_paths = [
@@ -1114,11 +1114,11 @@ def ending_repress(screen, state):
         stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
     print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
 
-    my_font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)
+    my_font = pygame.font.Font(resource_path("data/fonts/vcrosdneue.ttf"), 30)
     dialogue_manager = DialogueManager(font=my_font, screen=screen)
     isindialouge = False
     pygame.mixer.init()
-    word_sound = pygame.mixer.Sound("data/sounds/voice.WAV")
+    word_sound = pygame.mixer.Sound(resource_path("data/sounds/voice.WAV"))
 
     # Prepare transition intro (fade-in)
     frame_paths = [
@@ -1213,11 +1213,11 @@ def ending_save(screen, state):
         stage_mgr.save_stage(1)  # Ensure stage is set to 1 if not found
     print(f"Current stage: {stage_mgr.load_stage()}") #Testing stage loading
 
-    my_font = pygame.font.Font("data/fonts/vcrosdneue.ttf", 30)
+    my_font = pygame.font.Font(resource_path("data/fonts/vcrosdneue.ttf"), 30)
     dialogue_manager = DialogueManager(font=my_font, screen=screen)
     isindialouge = False
     pygame.mixer.init()
-    word_sound = pygame.mixer.Sound("data/sounds/voice.WAV")
+    word_sound = pygame.mixer.Sound(resource_path("data/sounds/voice.WAV"))
 
     # Prepare transition intro (fade-in)
     frame_paths = [

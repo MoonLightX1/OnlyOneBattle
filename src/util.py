@@ -10,11 +10,58 @@ import numpy as np
 import os
 import sys
 
-def resource_path(relative_path):
-    """ Get absolute path to resource for PyInstaller onefile mode """
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
+def resource_path(filename):
+    import os
+    import sys
+    import pygame
+
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    data_folder = os.path.join(base_path, "data")
+    normalized = filename.replace("\\", "/").lower()
+
+    ext = os.path.splitext(filename)[1].lower()
+
+    # Determine if filename already includes data folder or subfolders
+    if normalized.startswith("data/artwork/") or normalized.startswith("artwork/"):
+        full_path = os.path.join(base_path, filename)
+    elif normalized.startswith("data/sounds/") or normalized.startswith("sounds/"):
+        full_path = os.path.join(base_path, filename)
+    elif normalized.startswith("data/sfx/") or normalized.startswith("sfx/"):
+        full_path = os.path.join(base_path, filename)
+    elif normalized.startswith("data/fonts/") or normalized.startswith("fonts/"):
+        full_path = os.path.join(base_path, filename)
+    else:
+        # Choose subfolder based on extension or keywords
+        if ext in [".png", ".jpg", ".jpeg", ".bmp", ".gif"]:
+            subfolder = "artwork"
+        elif ext in [".mp3", ".ogg", ".wav", ".flac"]:
+            if any(x in normalized for x in ["loop", "track", "music"]):
+                subfolder = "sounds"
+            else:
+                subfolder = "sfx"
+        elif ext in [".ttf", ".otf"]:
+            subfolder = "fonts"
+        else:
+            subfolder = ""
+
+        if subfolder:
+            full_path = os.path.join(data_folder, subfolder, filename)
+        else:
+            full_path = os.path.join(data_folder, filename)
+
+    if not os.path.exists(full_path):
+        raise FileNotFoundError(f"Resource not found: {full_path}")
+
+    # Return loaded pygame Surface for images
+    if ext in [".png", ".jpg", ".jpeg", ".bmp", ".gif"]:
+        return pygame.image.load(full_path).convert_alpha()
+
+    # For fonts and sounds, return full path (let caller load them)
+    return full_path
 
 class Button:
     def __init__(self, name, x, y, icon_path, width, height):
@@ -89,11 +136,13 @@ class Text:
         self.x = screen_width - text_width - 15
         screen.blit(text_surface, (self.x, self.y))
         self.is_visible = True
-
-class SFX:
+class SFX: 
     def __init__(self, filename, cache_pitches=None):
         pygame.mixer.init()
-        self.original_sound = pygame.mixer.Sound(filename)
+
+        # Load using the resource path
+        full_path = resource_path(filename)
+        self.original_sound = pygame.mixer.Sound(full_path)
         self.sound_array = pygame.sndarray.array(self.original_sound)
         self.sample_rate = pygame.mixer.get_init()[0]
         self.cached_variants = {}
@@ -146,7 +195,7 @@ def delayed_call(delay, func, *args, **kwargs):
 
 class TiledTransition:
     def __init__(self, frame_paths, screen_size, tile_size=(32, 32), frame_delay=5, extra_delay=5, reverse=False):
-        self.frames = [pygame.transform.scale(resource_path(p).convert_alpha(), tile_size) for p in frame_paths]
+        self.frames = [pygame.transform.scale(resource_path(p), tile_size) for p in frame_paths]
         if reverse:
             self.frames = list(reversed(self.frames))
         self.tile_w, self.tile_h = tile_size
