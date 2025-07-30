@@ -7,6 +7,14 @@ from spinningballs import *
 from theflappybird import *
 from wave_splash import *
 import numpy as np
+import os
+import sys
+
+def resource_path(relative_path):
+    """ Get absolute path to resource for PyInstaller onefile mode """
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class Button:
     def __init__(self, name, x, y, icon_path, width, height):
@@ -16,7 +24,7 @@ class Button:
         self.icon_path = icon_path
         self.width = width
         self.height = height
-        self.icon = pygame.image.load(icon_path)
+        self.icon = resource_path(icon_path)
         self.icon = pygame.transform.scale(self.icon, (self.width, self.height))
     def is_clicked(self, mouse_pos):
         if self.x <= mouse_pos[0] <= self.x + self.width and self.y <= mouse_pos[1] <= self.y + self.height:
@@ -25,12 +33,12 @@ class Button:
     def load_center(self, screen_width, y_coord):
         self.x = (screen_width - self.width) // 2
         self.y = y_coord
-        self.icon = pygame.image.load(self.icon_path)
+        self.icon = resource_path(self.icon_path)
         self.icon = pygame.transform.scale(self.icon, (self.width, self.height))
     def load_right(self, screen_width, y_coord):
         self.x = screen_width - self.width - 15
         self.y = y_coord
-        self.icon = pygame.image.load(self.icon_path)
+        self.icon = resource_path(self.icon_path)
         self.icon = pygame.transform.scale(self.icon, (self.width, self.height))
     def draw(self, screen):
         screen.blit(self.icon, (self.x, self.y))
@@ -138,7 +146,7 @@ def delayed_call(delay, func, *args, **kwargs):
 
 class TiledTransition:
     def __init__(self, frame_paths, screen_size, tile_size=(32, 32), frame_delay=5, extra_delay=5, reverse=False):
-        self.frames = [pygame.transform.scale(pygame.image.load(p).convert_alpha(), tile_size) for p in frame_paths]
+        self.frames = [pygame.transform.scale(resource_path(p).convert_alpha(), tile_size) for p in frame_paths]
         if reverse:
             self.frames = list(reversed(self.frames))
         self.tile_w, self.tile_h = tile_size

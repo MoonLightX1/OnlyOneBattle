@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from bullets import *
 from projectiles import *
-from util import SFX
+from util import SFX, resource_path
 
 class Boss:
     def __init__(self, image_path, x, y, width, height, arena_rect, stagelvl=1):
@@ -33,7 +33,7 @@ class Boss:
         self.rotation_angle = 0
         self.rotation_speed = 1.5
 
-        self.image_original = pygame.image.load(image_path).convert_alpha()
+        self.image_original = resource_path(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image_original, (self.width, self.height))
 
         # Transition

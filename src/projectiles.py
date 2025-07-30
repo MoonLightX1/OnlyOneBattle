@@ -2,6 +2,8 @@ import time
 import pygame
 import math
 
+from util import resource_path
+
 class Throwable:
     def __init__(self, x, y, target_x, target_y, power=15):
         self.x = x
@@ -13,7 +15,7 @@ class Throwable:
         self.rect = pygame.Rect(x, y, self.radius, self.radius)
         self.spawned_zone = None
         self.iscooldowndone = False
-        self.image = pygame.image.load("data/artwork/throwables.png").convert_alpha()
+        self.image = resource_path("data/artwork/throwables.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.radius*2, self.radius*2))  #resized only slightly
     def calculate_velocity(self, x, y, target_x, target_y, power):
         dx = target_x - x
@@ -75,8 +77,8 @@ class DamageZone:
         self.creation_time = time.time()
         self.anchor = anchor
         self.offset = offset
-        self.image_vertical = pygame.image.load("data/artwork/goopuddle_side.png").convert_alpha()
-        self.image_horizontal = pygame.image.load("data/artwork/goop_normal.png").convert_alpha()
+        self.image_vertical = resource_path("data/artwork/goopuddle_side.png").convert_alpha()
+        self.image_horizontal = resource_path("data/artwork/goop_normal.png").convert_alpha()
         self.image = (self.image_vertical if orientation in ("down", "up")
                       else self.image_horizontal)
         self.image = pygame.transform.scale_by(self.image, 1.5)

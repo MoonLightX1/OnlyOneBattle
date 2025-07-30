@@ -21,7 +21,7 @@ class GiantLazer:
         self.lazersfx = SFX("data/sounds/lazer sfx.mp3")
 
         # Load the image
-        self.base_image = pygame.image.load("data/artwork/lazer.png").convert_alpha()
+        self.base_image = resource_path("data/artwork/lazer.png").convert_alpha()
         self.width = width
         self.color = (255, 0, 0)  # Optional, in case of fallback
 

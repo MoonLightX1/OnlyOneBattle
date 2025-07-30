@@ -1,5 +1,6 @@
 import pygame
 from gamelogic import *
+from util import resource_path
 
 class GameState:
     def __init__(self):
@@ -14,7 +15,7 @@ state = GameState()
 
 def run_game(screen):
     try:
-        logo = pygame.image.load("data/artwork/favicon.png")
+        logo = resource_path("data/artwork/favicon.png")
         pygame.display.set_icon(logo)
     except Exception as e:
         print("Could not load logo:", e)

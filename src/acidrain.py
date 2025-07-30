@@ -1,6 +1,7 @@
 import pygame
 import random
 import time
+from util import resource_path
 
 class AcidDrop:
     def __init__(self, x, arena_rect, fall_speed=7, image_path='data/artwork/aciddroplet.png'):
@@ -16,7 +17,7 @@ class AcidDrop:
         self.puddle_spawned = False
 
         # Load and scale the image
-        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image = resource_path(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
@@ -47,7 +48,7 @@ class AcidPuddle:
         self.y = arena_rect.bottom - self.height
 
         # Load and scale the image
-        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image = resource_path(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 

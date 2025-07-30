@@ -1,6 +1,7 @@
 import math
 import pygame
 from vfx import ParticleEffect
+from util import resource_path
 
 class Bullet:
     def __init__(self, x, y, target_x, target_y, image_path, power=25):
@@ -11,7 +12,7 @@ class Bullet:
         self.radius = 5  # for future circular hit or trail fx
 
         # Load bullet image
-        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image = resource_path(image_path).convert_alpha()
         self.original_image = self.image  # keep original for rotation
         self.rect = self.image.get_rect(center=(x, y))
 

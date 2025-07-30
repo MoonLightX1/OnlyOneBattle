@@ -3,6 +3,8 @@ import math
 import time
 from vfx import ParticleEffect 
 
+from util import resource_path
+
 class Rocket:
     def __init__(self, center_pos, angle, radius, player, speed=3, image_path="data/artwork/rocket.png"): #too lazy to just set the img path in the menus.py :sob:
         self.player = player
@@ -17,7 +19,7 @@ class Rocket:
         self.vx = 0
         self.vy = 0
 
-        original_image = pygame.image.load(image_path).convert_alpha()
+        original_image = resource_path(image_path).convert_alpha()
         w, h = original_image.get_size()
         self.image_orig = pygame.transform.scale(original_image, (w * 1.5, h * 1.5))
         self.image = self.image_orig.copy()

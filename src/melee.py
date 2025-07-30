@@ -1,7 +1,7 @@
 import pygame
 import time
 
-from util import SFX
+from util import SFX, resource_path
 
 class Sword:
     def __init__(self, owner, hitbox_size=1.0, damage=1, cooldown=0.8, image_path="data/artwork/dagger.png"):
@@ -11,7 +11,7 @@ class Sword:
         self.hitbox_size = hitbox_size
 
         # Load sword image
-        self.image = pygame.image.load(image_path).convert_alpha()
+        self.image = resource_path(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (20, 40))
         self.original_image = self.image
         self.width, self.height = self.image.get_size()

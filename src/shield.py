@@ -2,6 +2,8 @@ import pygame
 import math
 import time
 
+from util import resource_path
+
 class Shield:
     def __init__(self, player, duration=20, cooldown=10, image_path="data/artwork/shield.png"):
         self.player = player
@@ -10,7 +12,7 @@ class Shield:
         self.angle = 0
 
         # Load and scale shield image
-        self.original_image = pygame.image.load(image_path).convert_alpha()
+        self.original_image = resource_path(image_path).convert_alpha()
         self.original_image = pygame.transform.scale(self.original_image, (self.length, self.width))
         self.image = self.original_image
 

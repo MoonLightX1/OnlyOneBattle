@@ -1,9 +1,11 @@
 import random
 import pygame
 
+from util import resource_path
+
 class GlitchyArena:
     def __init__(self, image_path, pos):
-        self.image = pygame.image.load(image_path).convert()
+        self.image = resource_path(image_path).convert()
         self.original = self.image.copy()
         self.rect = self.image.get_rect(topleft=pos)
         self.glitch_timer = 0

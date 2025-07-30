@@ -17,7 +17,7 @@ from shield import Shield
 from dialouge import *
 
 def mainmenu(screen, state):
-    main_image = pygame.image.load("data/artwork/mainmenutemp.png")
+    main_image = resource_path("data/artwork/mainmenutemp.png")
 
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:
@@ -99,7 +99,7 @@ def mainmenu(screen, state):
             screen.blit(main_image, (0, 0))
 
 def deadscreen_logic(screen, state):
-    main_image = pygame.image.load("data/artwork/deadscreen.png")
+    main_image = resource_path("data/artwork/deadscreen.png")
 
     # Prepare transition intro (fade-in)
     frame_paths = [
@@ -197,7 +197,7 @@ def fightingscreen_dialog_logic(screen, state):
     clock = pygame.time.Clock()
 
     # Load images once
-    bg = pygame.image.load("data/artwork/battlingscreen_options.png")
+    bg = resource_path("data/artwork/battlingscreen_options.png")
     
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:
@@ -447,7 +447,7 @@ def battle_screen_01(screen, state):
     minutes_left = 2
     seconds_left = 0
     clock = pygame.time.Clock()
-    background = pygame.image.load("data/artwork/battlegroundbase.png")
+    background = resource_path("data/artwork/battlegroundbase.png")
     arena_bg = GlitchyArena("data/artwork/arena.png", (401, 624))
     arena_rect = pygame.Rect(401, 624, 1045, 456)
     player = Player(arena_rect.centerx - 25, arena_rect.bottom - 50, 50, 50, arena_rect)
@@ -1007,7 +1007,7 @@ def battle_screen_01(screen, state):
         clock.tick(60) #HOLY GYATT THIS IS A LOT OF CODE :#moneyface:
 
 def ending_kill(screen, state):
-    main_image = pygame.image.load("data/artwork/kill_ending.png")
+    main_image = resource_path("data/artwork/kill_ending.png")
 
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:
@@ -1106,7 +1106,7 @@ def ending_kill(screen, state):
         clock.tick(60)
 
 def ending_repress(screen, state):
-    main_image = pygame.image.load("data/artwork/repress_ending.png")
+    main_image = resource_path("data/artwork/repress_ending.png")
 
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:
@@ -1205,7 +1205,7 @@ def ending_repress(screen, state):
         clock.tick(60)
         
 def ending_save(screen, state):
-    main_image = pygame.image.load("data/artwork/save_ending.png")
+    main_image = resource_path("data/artwork/save_ending.png")
 
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:
@@ -1304,7 +1304,7 @@ def ending_save(screen, state):
         clock.tick(60)
 
 def creditslogic(screen, state):
-    main_image = pygame.image.load("data/artwork/credits_scene.png")
+    main_image = resource_path("data/artwork/credits_scene.png")
 
     stage_mgr = StageManager()
     if stage_mgr.load_stage() == None:

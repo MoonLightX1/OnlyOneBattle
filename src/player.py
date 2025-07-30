@@ -3,7 +3,7 @@ import time
 
 from bullets import *
 from vfx import *
-from util import SFX
+from util import SFX, resource_path
 
 class Player:
     def __init__(self, spawn_x, spawn_y, width, height, arena_rect):
@@ -13,7 +13,7 @@ class Player:
         self.velocity_y = 0
         self.screen_shake = 0 
         self.is_jumping = False
-        self.image = pygame.image.load("data/artwork/playerstar.png").convert_alpha()
+        self.image = resource_path("data/artwork/playerstar.png").convert_alpha()
         self.original_image = self.image  # for flipping if needed
         self.rect = self.image.get_rect(topleft=(spawn_x, spawn_y))
         self.last_damage_time = 0
