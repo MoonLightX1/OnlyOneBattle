@@ -564,7 +564,7 @@ def battle_screen_01(screen, state):
             if event.type == pygame.QUIT:
                 return "quit"
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_w:
                     player.jump()
                 elif event.key == pygame.K_1:
                     current_weapon = "bullet"

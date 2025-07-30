@@ -14,7 +14,7 @@ state = GameState()
 
 def run_game(screen):
     try:
-        logo = pygame.image.load("data/artwork/demo_logo.png")
+        logo = pygame.image.load("data/artwork/favicon.png")
         pygame.display.set_icon(logo)
     except Exception as e:
         print("Could not load logo:", e)

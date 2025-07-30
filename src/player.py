@@ -52,10 +52,10 @@ class Player:
         self.chargereleaseSFX = SFX("data/sounds/charge release sfx.mp3")
 
     def handle_input(self, keys):
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             self.rect.x -= self.speed
             self.direction = -1
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_d]:
             self.rect.x += self.speed
             self.direction = 1
 
