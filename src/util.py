@@ -10,11 +10,7 @@ import numpy as np
 import os
 import sys
 
-def resource_path(filename):
-    import os
-    import sys
-    import pygame
-
+def resource_path(filename): #bc the stupid compiler needs this
     try:
         base_path = sys._MEIPASS
     except Exception:
@@ -47,7 +43,6 @@ def resource_path(filename):
             subfolder = "fonts"
         else:
             subfolder = ""
-
         if subfolder:
             full_path = os.path.join(data_folder, subfolder, filename)
         else:

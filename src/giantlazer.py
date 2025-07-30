@@ -28,7 +28,7 @@ class GiantLazer:
     def update(self):
         if self.state == "rising":
             if self.hasplayedaudi == False:
-                self.lazersfx.play(0.6,1.5,False,0.8)
+                self.lazersfx.play(0.6,1.5,False,1)
                 self.hasplayedaudi = True
             self.top_y -= self.rise_speed
             if self.top_y <= self.target_top_y:

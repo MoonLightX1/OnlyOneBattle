@@ -66,14 +66,14 @@ class Player:
             self.is_jumping = True
             
     def take_damage(self, amount):
-        self.hurtSFX.play(0.6, 1.5, False, 0.5)
+        self.hurtSFX.play(0.6, 1.5, False, 0.09)
         now = time.time()
         if now - self.last_damage_time >= self.damage_cooldown:
             self.health -= amount
             self.last_damage_time = now
             print(f"Player took {amount} damage! Health now: {self.health}")
             if self.health <= 0:
-                self.deathSFX.play(1,1,False,1.5)
+                self.deathSFX.play(1,1,False,0.4)
                 self.chargeSFX.stop()
                 self.shootSFX.stop()
                 self.health = 0
@@ -87,7 +87,7 @@ class Player:
         if not self.charging:
             return
         self.charging = False
-        self.chargereleaseSFX.play(0.6,1.5,False,0.7)
+        self.chargereleaseSFX.play(0.6,1.5,False,0.09)
         self.shootSFX.play(1,1,False,1)
         self.chargeSFX.stop()
 

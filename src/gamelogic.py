@@ -673,14 +673,14 @@ def battle_screen_01(screen, state):
                     print(f"[boss_attack_loop] Action chosen: {action}")
                     if action == 1 or action == 4:
                         print("Boss uses: ACID RAIN :scary:")
-                        acidrainSFX.play(0.6,1.5,False,0.9)
+                        acidrainSFX.play(0.6,1.5,False,0.4)
                         acid_attack = AcidRainAttack(arena_rect, player)
                     elif action == 2 or action == 5:
                         print("Boss uses: GYANT LAZER")
                         giant_lazers.append(GiantLazer(boss, arena_rect))
                     elif action == 3:
                         print("Boss uses: rocket lazer :sad:")
-                        rocketSFX.play(0.6,1.5,False,0.8)
+                        rocketSFX.play(0.6,1.5,False,1)
                         new_attack = RocketsAttack(boss, player, arena_rect)
                         active_rocket_attacks.append(new_attack)
                     boss_attack_timer = 0
@@ -720,7 +720,7 @@ def battle_screen_01(screen, state):
                             vfx_list.append(spinning_ball)
                     if action_other == 3:
                         print("Boss uses: ACID RAIN :scary:")
-                        acidrainSFX.play(0.6,1.5,False,0.9)
+                        acidrainSFX.play(0.6,1.5,False,0.4)
                         acid_attack = AcidRainAttack(arena_rect, player)
                     elif action_other == 4:
                         print("Boss uses: GYANT LAZER")
@@ -749,7 +749,7 @@ def battle_screen_01(screen, state):
             elapsed = pygame.time.get_ticks() - intro_start_time
             if elapsed >= intro_total_duration:
                 intro_display = False
-                heartpumpySFX.play(0.6,1.5,True,0.9)
+                heartpumpySFX.play(0.6,1.5,True,10)
             else:
                 warning_text = font_large.render("! BOSS INCOMING !", True, (255, 140, 0))
                 warning_surface = warning_text.convert_alpha()

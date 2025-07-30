@@ -82,7 +82,7 @@ class Boss:
             screen.blit(rotated_image, rotated_rect.topleft)
 
     def take_damage(self, amount):
-        self.damageSFX.play(0.4, 1, False, 0.4)
+        self.damageSFX.play(0.4, 1, False, 0.09)
         now = time.time()
         if now - self.last_damage_time >= self.damage_cooldown:
             self.health = round(self.health - amount, 1)
