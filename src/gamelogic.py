@@ -301,7 +301,7 @@ def fightingscreen_dialog_logic(screen, state):
                         delayed_call(14, lambda: dialogue_manager.queue_dialogue("Can you say anything besides no?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         delayed_call(18, lambda: dialogue_manager.queue_dialogue("Yes.", "AMALGAM", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                         delayed_call(21, lambda: dialogue_manager.queue_dialogue("Okay... then... how've you been?", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
-                        delayed_call(25, lambda: dialogue_manager.queue_dialogue("I’ve been. I’ve been for a while, how though? You already know.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                        delayed_call(25, lambda: dialogue_manager.queue_dialogue("I’ve been. I’ve been for a while, how     though? You already know.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                         delayed_call(29, lambda: dialogue_manager.queue_dialogue("What?", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         delayed_call(32, lambda: dialogue_manager.queue_dialogue("I still think about the smell of his shampoo when I’m alone.", "AMALGAM", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                         def end_dialogue():
@@ -568,21 +568,26 @@ def battle_screen_01(screen, state):
                     player.jump()
                 elif event.key == pygame.K_1:
                     current_weapon = "bullet"
+                    player.chargeSFX.stop()
                     switchitemSFX.play(0.6,1.5,False,0.8)
                 elif event.key == pygame.K_2:
                     current_weapon = "sword"
+                    player.chargeSFX.stop()
                     switchitemSFX.play(0.6,1.5,False,0.8)
                 elif event.key == pygame.K_3:
                     current_weapon = "throwable"
+                    player.chargeSFX.stop()
                     switchitemSFX.play(0.6,1.5,False,0.8)
                 elif event.key == pygame.K_f and not shield_active and (stage_mgr.load_stage() == 5 or stage_mgr.load_stage() == 8):
                     if shield is None:
                         shield = Shield(player)
+                        player.chargeSFX.stop()
                     if shield.is_ready():
                         shield.activate()
+                        player.chargeSFX.stop()
                         switchitemSFX.play(0.6,1.5,False,0.4)
                         current_weapon = None
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not intro_display:
                 if not shield_active:
                     if current_weapon == "bullet":
                         player.start_charging()
@@ -594,7 +599,6 @@ def battle_screen_01(screen, state):
                                 if throw_amount != 0:
                                     shootSFX.play(0.8,1.8,False,1)
                                     throwable.subtract_amount(1)
-                                    repressendingpotential = False
                                     mouse_x, mouse_y = pygame.mouse.get_pos()
                                     player_center_x = player.rect.centerx
                                     player_center_y = player.rect.centery
@@ -624,7 +628,7 @@ def battle_screen_01(screen, state):
                     if current_weapon == "bullet":
                         player.stop_charging_and_shoot(vfx_list)
         if not intro_display:
-            if stage_mgr.load_stage() == 1 or stage_mgr.load_stage():    #STAGE 1 ATTACKS WOOO
+            if stage_mgr.load_stage() == 1:    #STAGE 1 ATTACKS WOOO
                 if boss_attack_timer == attack_interval:
                     possible_actions_other = [1, 2, 3]
                     if last_boss_attack == 1:
@@ -736,20 +740,26 @@ def battle_screen_01(screen, state):
         player.handle_reload()
         # Remove done VFX and dead bullets
         vfx_list = [v for v in vfx_list if (not isinstance(v, Bullet) or v.alive) and not getattr(v, "is_done", lambda: False)()]
-
-        if boss.health < 100 and stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5 and repressendingpotential == True:
-            repressendingpotential = False #Just an easy way to do it lol
-            print("No longer capable of doing RepressEnding!")
+        
+        if boss.hastakenbigdmg == True and stage_mgr.load_stage() in (3, 4, 5):
+            repressendingpotential = False
+            print("Repress is false")
 
         screen.blit(background, (0, 0))
         arena_bg.update()
         arena_bg.draw(screen)
         # Boss intro warning text
-        if intro_display:
+        if intro_display == True:
             elapsed = pygame.time.get_ticks() - intro_start_time
             if elapsed >= intro_total_duration:
                 intro_display = False
-                heartpumpySFX.play(0.6,1.5,True,10)
+                heartpumpySFX.play(0.6,1.5,True,1)
+                if stage_mgr.load_stage() == 1:
+                    boss.health = 300
+                elif stage_mgr.load_stage() == 2 or stage_mgr.load_stage() == 7 or stage_mgr.load_stage() == 8:
+                    boss.health = 200
+                elif stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:
+                    boss.health = 100
             else:
                 warning_text = font_large.render("! BOSS INCOMING !", True, (255, 140, 0))
                 warning_surface = warning_text.convert_alpha()
@@ -775,56 +785,68 @@ def battle_screen_01(screen, state):
                     ))
 
         if stage_mgr.load_stage() in (3, 4, 5):
-            if not countdown_started:
-                countdown_start_time = pygame.time.get_ticks()
-                countdown_started = True
-            else:
-                time_passed = pygame.time.get_ticks() - countdown_start_time
-                time_left_ms = max(0, countdown_duration - time_passed)
+            if not intro_display:
+                if not countdown_started:
+                    countdown_start_time = pygame.time.get_ticks()
+                    countdown_started = True
+                else:
+                    time_passed = pygame.time.get_ticks() - countdown_start_time
+                    time_left_ms = max(0, countdown_duration - time_passed)
 
-                time_left_minutes = time_left_ms / 60000  # float like 1.5 = 1m 30s
-                minutes_left = int(time_left_ms / 60000)
-                seconds_left = int((time_left_ms % 60000) / 1000)
+                    time_left_minutes = time_left_ms / 60000  # float like 1.5 = 1m 30s
+                    minutes_left = int(time_left_ms / 60000)
+                    seconds_left = int((time_left_ms % 60000) / 1000)
 
-                if time_passed >= countdown_duration:
-                    print("Time is up pal")
-                    if boss.health < 0:
-                        print("Save Ending, boss not defeated")
-                        battlesong.stop()
-                        heartpumpySFX.stop()
-                        return "mainmenu" # replace blah blah
+                    if time_passed >= countdown_duration:
+                        print("Time is up pal")
+                        if boss.health < 0:
+                            print("Save Ending, boss not defeated")
+                            battlesong.stop()
+                            heartpumpySFX.stop()
+                            return "save" # replace blah blah
 
         #boss
         if intro_display == False:
             boss.update(stage_mgr.load_stage())
-            if boss.health <= 200 and stage_mgr.load_stage() == 1:
+            current_stage = stage_mgr.load_stage()
+            if boss.health <= 200 and current_stage == 1:
                 stage_mgr.save_stage(2) 
                 lvlcomplete.play(0.6,1.5,False,0.8)
                 battlesong.stop()
+                player.stop_current_sfx()
                 heartpumpySFX.stop()
                 return "fighting_dialog"
-            elif boss.health <= 100 and stage_mgr.load_stage() == 2 or stage_mgr.load_stage() == 8 or stage_mgr.load_stage() == 7:
-                stage_mgr.save_stage(3)
+            elif boss.health <= 100 and current_stage in (2, 7, 8):
+                next_stage = {2: 3, 7: 4, 8: 5}[current_stage]
+                stage_mgr.save_stage(next_stage)
                 lvlcomplete.play(0.6,1.5,False,0.8)
                 battlesong.stop()
+                player.stop_current_sfx()
+                for lazer in giant_lazers:
+                    lazer.stop_currentsfx()
+                rocketSFX.stop()
+                acidrainSFX.stop()
                 heartpumpySFX.stop()
                 return "fighting_dialog"
-            elif boss.health <= 0 and stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:
+            elif boss.health <= 0 and current_stage in (3, 4, 5):
                 lvlcomplete.play(0.6,1.5,False,0.8)
+                for lazer in giant_lazers:
+                    lazer.stop_currentsfx()
+                acidrainSFX.stop()
                 if repressendingpotential == True:
                     print("Boss defeated! | Repress Ending")
                     battlesong.stop()
+                    player.stop_current_sfx()
                     heartpumpySFX.stop()
-                    return "main_menu"
-                else:
+                    return "repress"
+                elif repressendingpotential == False:
                     print("Boss defeated! | Killer Ending") #
                     battlesong.stop()
+                    player.stop_current_sfx()
                     heartpumpySFX.stop()
-                    return "main_menu"
+                    return "killer"
             boss.resolve_collision_with_player(player)
             boss.check_bullet_collisions(vfx_list, damage=5, vfx_list=vfx_list)  # assuming bullets in vfx_list
-            if boss.check_player_collision(player):
-                player.take_damage(10)
             boss.draw(screen)
 
         if player.health <= 0:
@@ -835,9 +857,13 @@ def battle_screen_01(screen, state):
                 screen.blit(fade_surface, (0, 0))
                 pygame.display.flip()
                 pygame.time.delay(5)
-
+            for lazer in giant_lazers:
+                lazer.stop_currentsfx()
+            rocketSFX.stop()
+            acidrainSFX.stop()
             print("Player is dead!")
             heartpumpySFX.stop()
+            player.stop_current_sfx()
             battlesong.stop()
             return "deadscreen"
         

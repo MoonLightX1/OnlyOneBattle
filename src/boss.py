@@ -21,6 +21,8 @@ class Boss:
         self.health = 100
         self.last_damage_time = 0
         self.damage_cooldown = 0.1 
+        self.last_damage_time_sep = 0
+        self.damage_cooldown_sep = 0.1 
         self.last_heal_time = 0
         self.heal_cooldown = 0.1
         
@@ -46,6 +48,8 @@ class Boss:
         self.damageSFX = SFX("data/sounds/damage sfx.mp3")
         self.deathSFX = SFX("data/sounds/death sfx.mp3")
 
+        self.hastakenbigdmg = False
+
     def update(self, stagelvl):
         # Move horizontally
         self.x += self.speed_x * self.direction_x
@@ -66,7 +70,7 @@ class Boss:
         
         self.rotation_angle = (self.rotation_angle + self.rotation_speed) % 360
         if stagelvl == 3 or stagelvl == 4 or stagelvl == 5:
-            self.take_damage(0.1)
+            self.take_damage_sepcooldown(0.1)
 
     def draw(self, screen):
         rotated_image = pygame.transform.rotate(self.image, -self.rotation_angle)
@@ -82,11 +86,27 @@ class Boss:
             screen.blit(rotated_image, rotated_rect.topleft)
 
     def take_damage(self, amount):
-        self.damageSFX.play(0.4, 1, False, 0.09)
+        self.damageSFX.play(0.4, 1, False, 0.3)
+        if amount > 0.11:
+            self.hastakenbigdmg = True
         now = time.time()
         if now - self.last_damage_time >= self.damage_cooldown:
             self.health = round(self.health - amount, 1)
             self.last_damage_time = now
+            print(f"Boss took {amount} damage! Health now: {self.health}")
+            if self.health <= 0:
+                self.deathSFX.play(0.4, 1, False, 0.4)
+                self.health = 0
+                print('dead')
+                
+    def take_damage_sepcooldown(self, amount):
+        self.damageSFX.play(0.4, 1, False, 0.3)
+        if amount > 0.11:
+            self.hastakenbigdmg = True
+        now = time.time()
+        if now - self.last_damage_time_sep >= self.damage_cooldown_sep:
+            self.health = round(self.health - amount, 1)
+            self.last_damage_time_sep = now
             print(f"Boss took {amount} damage! Health now: {self.health}")
             if self.health <= 0:
                 self.deathSFX.play(0.4, 1, False, 0.4)
@@ -103,7 +123,7 @@ class Boss:
                     vfx_list.append(ParticleEffect(self.rect.centerx, self.rect.centery))
             if isinstance(obj, Throwable) and getattr(obj, 'alive', False) and hasattr(obj, 'rect'):
                 if self.rect.colliderect(obj.rect):
-                    self.take_damage(0.1) 
+                    self.take_damage(0.13) 
 
     def add_health(self, amount):
         now = time.time()

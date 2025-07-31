@@ -47,6 +47,9 @@ class GiantLazer:
         elif self.state == "done":
             self.finished = True
 
+    def stop_currentsfx(self):
+        self.lazersfx.stop()
+
     def draw(self, screen):
         if self.state == "rising":
             dynamic_height = self.arena_rect.bottom - self.top_y

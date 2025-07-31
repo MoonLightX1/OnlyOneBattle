@@ -44,7 +44,6 @@ class Sword:
             self.timer -= 1
             if self.timer == 0:
                 self.active = False
-
         if self.active:
             self._update_hitbox_pos()
 

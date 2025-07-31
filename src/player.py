@@ -66,7 +66,7 @@ class Player:
             self.is_jumping = True
             
     def take_damage(self, amount):
-        self.hurtSFX.play(0.6, 1.5, False, 0.09)
+        self.hurtSFX.play(0.6, 1.5, False, 0.3)
         now = time.time()
         if now - self.last_damage_time >= self.damage_cooldown:
             self.health -= amount
@@ -87,7 +87,7 @@ class Player:
         if not self.charging:
             return
         self.charging = False
-        self.chargereleaseSFX.play(0.6,1.5,False,0.09)
+        self.chargereleaseSFX.play(0.6,1.5,False,0.2)
         self.shootSFX.play(1,1,False,1)
         self.chargeSFX.stop()
 
@@ -186,9 +186,9 @@ class Player:
         for bullet in self.bullets:
             bullet.update(walls, vfx_list)
         self.bullets = [b for b in self.bullets if b.alive]
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             self.facing_right = False
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_d]:
             self.facing_right = True
 
     def stop_current_sfx(self):

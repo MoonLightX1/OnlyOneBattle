@@ -33,7 +33,7 @@ def run_game(screen):
             result = creditslogic(screen, state)
         elif state.current == "repress":
             result = ending_repress(screen, state)
-        elif state.current == "kill":
+        elif state.current == "killer":
             result = ending_kill(screen, state)
         elif state.current == "save":
             result = ending_save(screen, state)
