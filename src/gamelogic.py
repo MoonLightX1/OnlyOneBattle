@@ -799,10 +799,15 @@ def battle_screen_01(screen, state):
 
                     if time_passed >= countdown_duration:
                         print("Time is up pal")
-                        if boss.health < 0:
+                        if boss.health > 0:
                             print("Save Ending, boss not defeated")
+                            lvlcomplete.play(0.6,1.5,False,0.8)
                             battlesong.stop()
+                            acidrainSFX.stop()
                             heartpumpySFX.stop()
+                            player.stop_current_sfx()
+                            for lazer in giant_lazers:
+                                lazer.stop_currentsfx()
                             return "save" # replace blah blah
 
         #boss
