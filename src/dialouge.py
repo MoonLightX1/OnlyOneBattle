@@ -57,6 +57,7 @@ class DialogueBox:
 
         elapsed = time.time() - self.start_time
         new_visible = int(self.chars_per_second * elapsed)
+        new_visible = min(new_visible, self.total_chars)
 
         # Play sound for each newly revealed character
         if new_visible > self.last_char_index:
@@ -67,16 +68,13 @@ class DialogueBox:
                     pitched.play()
             self.last_char_index = new_visible - 1
 
-        self.visible_chars = min(new_visible, self.total_chars)
+        self.visible_chars = new_visible
 
         if self.visible_chars >= self.total_chars:
-            self.visible_chars = self.total_chars
             self.finished_typing = True
             self.remove_after = time.time() + self.stay_time
 
         return False
-
-
     def draw(self):
         pygame.draw.rect(self.screen, self.bg_color, self.rect, border_radius=10)
 

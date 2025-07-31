@@ -338,7 +338,7 @@ def fightingscreen_dialog_logic(screen, state):
                         delayed_call(31, lambda: dialogue_manager.queue_dialogue("I’ve been. I’ve been for a while, how though? You already know.", "AMALGAM", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                         delayed_call(35, lambda: dialogue_manager.queue_dialogue("What?", "MC", type_time=1, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         delayed_call(39, lambda: dialogue_manager.queue_dialogue("I still think about the smell of his shampoo when I’m alone.", "AMALGAM", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
-                        delayed_call(43, lambda: dialogue_manager.queue_dialogue("I think I had a cat once, a lanky tabby with a nasty attitude. Nepenthe. I grew up- ", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
+                        delayed_call(43, lambda: dialogue_manager.queue_dialogue("I think I had a cat once, a lanky tabby with a nasty attitude. Neptune. I grew up- ", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         delayed_call(47, lambda: dialogue_manager.queue_dialogue("with him since we were born the same month. I remember he was afraid of me since I’d ", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         delayed_call(51, lambda: dialogue_manager.queue_dialogue("chase him around and roughhouse. I know that’s bad, but I was an unattended child. ", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
                         delayed_call(55, lambda: dialogue_manager.queue_dialogue("An unattended child is gonna terrorize some poor animal. Things got better when I", "MC", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.6))
@@ -354,7 +354,7 @@ def fightingscreen_dialog_logic(screen, state):
                     if event.key == pygame.K_RETURN and last_clicked_button_index == 2 and isindialouge == False and not show_dialogbox_example:
                         buttonSFX.play(0.6,1.5,False,0.4)
                         isindialouge = True
-                        dialogue_manager.queue_dialogue("Hmph mocking him will only make the situation worse.", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
+                        dialogue_manager.queue_dialogue("Hmph mocking them will only make the situation worse.", "MC", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.6)
                         def end_dialogue():
                             nonlocal isindialouge
                             isindialouge = False
