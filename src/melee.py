@@ -4,7 +4,7 @@ import time
 from util import SFX, resource_path
 
 class Sword:
-    def __init__(self, owner, hitbox_size=1.0, damage=1, cooldown=0.8, image_path="data/artwork/dagger.png"):
+    def __init__(self, owner, hitbox_size=8.0, damage=1, cooldown=0.8, image_path="data/artwork/dagger.png"):
         self.owner = owner
         self.damage = damage
         self.cooldown = cooldown  # seconds between attacks

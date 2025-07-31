@@ -127,6 +127,7 @@ class Boss:
 
     def add_health(self, amount):
         now = time.time()
+        print("Time since last heal:", now - self.last_heal_time)
         if now - self.last_heal_time >= self.heal_cooldown:
             self.health = round(self.health + amount, 1)
             self.last_heal_time = now

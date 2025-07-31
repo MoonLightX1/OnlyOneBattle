@@ -456,7 +456,7 @@ def battle_screen_01(screen, state):
     battlesong_active = False
     
     current_weapon = "bullet" 
-    sword = Sword(player, hitbox_size=1.2, damage=15, cooldown=0.4)
+    sword = Sword(player, hitbox_size=2, damage=15, cooldown=0.4)
     
         # boss teheee
     boss = Boss("data/artwork/enemies_heart.png", x=1270, y=838, width=149, height=140, arena_rect=arena_rect)
@@ -968,20 +968,14 @@ def battle_screen_01(screen, state):
             if sword.check_hit(boss):
                 print("Boss hit by sword!")
                 repressendingpotential = False
-                if stage_mgr.load_stage == 3 or stage_mgr.load_stage == 4 or stage_mgr.load_stage == 5:
-                    if boss.health >= 100:
-                        print('no')
-                    else:
-                        boss.add_health(5)
-                elif stage_mgr.load_stage == 2 or stage_mgr.load_stage == 7 or stage_mgr.load_stage == 8:
-                    if boss.health >= 200:
-                        print('no')
-                    else:
-                        boss.add_health(5)
-                elif stage_mgr.load_stage == 1:
-                    if boss.health >= 300:
-                        print('no')
-                    else:
+                if stage_mgr.load_stage() == 3 or stage_mgr.load_stage() == 4 or stage_mgr.load_stage() == 5:
+                    if boss.health <= 100:
+                        boss.add_health(5)  
+                elif stage_mgr.load_stage() == 2 or stage_mgr.load_stage() == 7 or stage_mgr.load_stage() == 8:
+                    if boss.health <= 200:
+                        boss.add_health(5)  
+                elif stage_mgr.load_stage() == 1:
+                    if boss.health <= 300:
                         boss.add_health(5)      
             sword.draw(screen)
         if current_weapon == "throwable":
@@ -1221,7 +1215,7 @@ def ending_repress(screen, state):
                 delayed_call(2, lambda: dialogue_manager.queue_dialogue("You killed it.", "???", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                 delayed_call(6, lambda: dialogue_manager.queue_dialogue("Your inaction has beaten your enemy...", "???", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                 delayed_call(10, lambda: dialogue_manager.queue_dialogue("Over the years what have you done?", "???", type_time=3, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
-                delayed_call(15, lambda: dialogue_manager.queue_dialogue("Ran? Hide? Evaded it all?", "???", type_time=5, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
+                delayed_call(15, lambda: dialogue_manager.queue_dialogue("Ran? Hid? Evaded it all?", "???", type_time=5, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                 delayed_call(22, lambda: dialogue_manager.queue_dialogue("Did avoiding bring any of them back?", "???", type_time=2, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                 delayed_call(26, lambda: dialogue_manager.queue_dialogue("You ponder the future without them...", "???", type_time=4, stay_time=2, char_sound=word_sound, pitch_factor=0.8))
                 delayed_call(33, lambda: leavinshi.__setitem__(0, True))
